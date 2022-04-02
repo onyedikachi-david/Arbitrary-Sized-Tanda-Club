@@ -1,5 +1,6 @@
 'reach 0.1';
 /* eslint-disable */
+
 // Procedure or steps in an arbitrary tanda sized club? 
 // Steps:
 // 1. Someone creates a contribution pool
@@ -11,25 +12,23 @@
 // 5. 
 
 
-
-
-
 // General conditions:
 // The counter wont begin untill all the total number specified is completed.
 export const main = Reach.App(() => {
-  const A = Participant('Alice', {
-    // Specify Alice's interact interface here
+  const PC = Participant('PoolCreator', {
+    // Pool Creator's interact interface
+    getDetails: Fun([], Object({
+      contributionAmt: UInt,
+      duration: UInt,
+      frequency: UInt
+    }))
   });
-  const B = Participant('Bob', {
-    // Specify Bob's interact interface here
+  const C = API('Contributors', {
+    // Contributors interact interface
   });
   init();
-  // The first one to publish deploys the contract
-  A.publish();
-  commit();
-  // The second one to publish always attaches
-  B.publish();
-  commit();
-  // write your program here
+  
+
+  
   exit();
 });
