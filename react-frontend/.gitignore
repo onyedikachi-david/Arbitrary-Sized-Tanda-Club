@@ -25,3 +25,6 @@ yarn-error.log*
 .reach
 /src/build
 /test/build
+
+/src/contract/test.rsh
+/src/contract/helper.rsh
