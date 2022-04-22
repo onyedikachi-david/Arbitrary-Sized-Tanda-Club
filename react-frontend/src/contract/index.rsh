@@ -1,4 +1,5 @@
 'reach 0.1';
+'use strict';
 /* eslint-disable */
 
 // Procedure or steps in an arbitrary tanda sized club? 
@@ -15,99 +16,109 @@
 // General conditions:
 // The counter wont begin untill all the total number specified is completed.
 
-const GetPoolDetails =  Struct([
-  ["name", Bytes(100)],
-  ["contributionAmt", UInt],
-  ["duration", UInt],
-  ["frequency", UInt],
-  ["minUsers", UInt],
-  ["maxUsers", UInt],
-  ["numUsers", UInt],
-]);
 
+const PoolDetails = Struct([
+    ["poolName", Bytes(200)],
+    ["contributionAmt", UInt],
+    ["maxPersons", UInt],
+    ["minPersons", UInt],
+    ["duration", UInt],
+
+]);
 
 const ContributeUpdate = Struct([
-  ["newUserContributed", UInt],
-  ["newEveryoneContributed", UInt],
-]);
+    ["newUserContributed", UInt],
+    ["newEveryoneContributed", UInt],
+  ]);
 
 const PaymentUpdate = Struct([
-  ["newUserPaid", UInt],
-  ["newEveryonePaid", UInt],
+    ["newUserPaid", UInt],
+    ["newEveryonePaid", UInt],
 ])
 
-export const main = Reach.App(() => {
-  const PC = Participant('PoolCreator', {
-    // Pool Creator's interact interface
-    getPoolDetails: GetPoolDetails,
-    readyForContribution: Fun([], Null),
-  });
-  const C = API('Contributors', {
-    // Contributors interact interface
-    contribute: Fun([UInt], Null),
-    withdraw: Fun([UInt], Null),
+export const main =  Reach.App(() => {
+    const PC = Participant('PoolCreator', {
+        getPoolDetails: PoolDetails,
+        readyForContribution: Fun([], Null),
+    });
 
-  });
+    const C = API('Contributor', {
+        contribute: Fun([UInt], ContributeUpdate),
+    });
 
-  const A = API('Admin', {
-    // Bla interact interface
-    stop: Fun([], Null),
-  })
-  const V = View({
-    // View interface
-    getPoolDetails: GetPoolDetails,
-    totalContributed: UInt,
-    end: UInt,
-    contributed: Fun([Address], UInt),
-    paymentAvailableAt: Fun([Address, UInt /* round */], UInt),
-  })
-  init();
+    const A = API('Admin', {
+        stop: Fun([], Null),
+    });
 
-  PC.only(() => {
-    const getDetails = declassify(interact.getDetails);
-    const { duration, frequency } = getDetails;
-    // const end = duration * frequency;
-  })
+    const V = View({
+        // View interface
+        getPoolDetails: PoolDetails,
+        totalContributed: UInt,
+        end: UInt,
+        contributed: Fun([Address], UInt),
+        paymentAvailableAt: Fun([Address, UInt /* round */], UInt),
+      });
 
-  PC.publish(getDetails, duration, frequency);
-  V.getDetails.set(getDetails);
-  const { contributionAmt } = getDetails;
-  commit();
+    init();
 
-  PC.pay(contributionAmt);
+    PC.only(() => {
+        const poolDetails = declassify(interact.getPoolDetails);
+        const { duration, contributionAmt, minPersons, maxPersons } = poolDetails;
+    });
+    PC.publish(poolDetails, duration, contributionAmt, minPersons, maxPersons);
+    commit();
+    PC.pay(contributionAmt);
 
-  const start = lastConsensusTime() + 2;
-  const end = start + duration;
-  V.end.set(end);
+    const start = lastConsensusTime() + 2;
+    const end = start + duration;
+    V.end.set(end);
 
-  const Contributions =  new Map(UInt);
-  const Payments = new Map(UInt);
+    PC.interact.readyForContribution();
 
-  const lookupContributions = (addr) => fromSome(Contributions[addr], 0);
-  const lookupPayments = (addr) => fromSome(Payments[addr], 0);
-  V.contributed.set(lookupContributions);
+    const Contributors = new Set();
 
-  PC.interact.readyForContribution();
+    const lookUpContributor = (address) =>  fromSome(Contributors[address], 0);
 
-  const [totalContributionAmt, ended, payout, numUsers] = 
-  parallelReduce([0, false, 0, 0])
-     .define(() => {
-         const lct = lastConsensusTime();
+    // ---> Check that the person is calling the right pool contract
+    // ---> Check that the person has'nt contributed before within the contribution duration
 
-     })
-     .invariant( balance() == totalContributionAmt * numUsers
-         )
-     .while(totalContributionAmt != 0 || lct <= end)
-     .api(C.contribute, 
-         () => {
+    const [totalContributionAmt, ended, payout, numUsers] = 
+     parallelReduce([0, false, 0, 0])
+        .define(() => {
+            const lct = lastConsensusTime();
 
-         },
-         () => contributionAmt,
-         (k) => {
-             
-         }
-         )
+        })
+        .invariant( balance() == totalContributionAmt * numUsers
+            // && payout == true 
+            && Contributors.Map.size() == numUsers
+            )
+        .while(totalContributionAmt != 0 || lct <= end)
+        // API syntax is as follows:
+        // ---> The name of the API,
+        // ---> A fuction that specifies wether or not theyre allowed to interact with the API,
+        // ---> A function that goes from the arguments of the API to how much theyre supposed to contribute
+        .api(C.contribute, 
+            () => {
+                // assumptions that must be true to call contribute
+            },
+            () => contributionAmt,
+            (amt, k) => {
+                newEveryOneContributed = totalContributionAmt + amt;
+                newUserContributed = lookUpContributor(this) + amt;
+                Contributors[this] = newUserContributed;
+                k(contributionAmt);
 
-  
-  exit();
+               // return whatever the work is
+               return [ totalContributionAmt, ended, payout, numUsers + 1 ];
+                
+            }
+            )
+        .timeout( absoluteTime(end), () => {
+            const [ [], k ] = call(A.stop); // that someone is calling stop
+            k(true) // and that if so, then we should stop
+            return [totalContributionAmt, true, payout, numUsers];
+        } )
+
+    commit();
+    exit();
 });
