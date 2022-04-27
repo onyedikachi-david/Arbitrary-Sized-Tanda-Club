@@ -37,6 +37,13 @@ const PaymentUpdate = Struct([
 ])
 
 export const main =  Reach.App(() => {
+    setOptions({
+        // Users deleting their own local state would only hurt themselves.
+        // They would lose access to rewards and stake that should be rightfully theirs.
+        untrustworthyMaps: false,
+        // Would like to turn this on but it would take more time to satisfy the theorem prover.
+        verifyArithmetic: false,
+      });
     const PC = Participant('PoolCreator', {
         getPoolDetails: PoolDetails,
         readyForContribution: Fun([], Null),
@@ -98,10 +105,10 @@ export const main =  Reach.App(() => {
         // ---> A fuction that specifies wether or not theyre allowed to interact with the API,
         // ---> A function that goes from the arguments of the API to how much theyre supposed to contribute
         .api(C.contribute, 
-            () => {
-                // assumptions that must be true to call contribute
-            },
-            () => contributionAmt,
+            // (amt) => {
+            //     // assumptions that must be true to call contribute
+            // },
+            (amt) => contributionAmt,
             (amt, k) => {
                 newEveryOneContributed = totalContributionAmt + amt;
                 newUserContributed = lookUpContributor(this) + amt;
@@ -109,7 +116,7 @@ export const main =  Reach.App(() => {
                 k(contributionAmt);
 
                // return whatever the work is
-               return [ totalContributionAmt, ended, payout, numUsers + 1 ];
+               return [ totalContributionAmt + amt, ended, payout, numUsers + 1 ];
                 
             }
             )

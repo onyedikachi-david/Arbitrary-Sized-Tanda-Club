@@ -1,5 +1,5 @@
 'reach 0.1';
-'use strict';
+// 'use strict';
 /* eslint-disable */
 
 const PoolDetails = Struct([
@@ -14,13 +14,21 @@ const PoolDetails = Struct([
 ]);
 
 export const main =  Reach.App(() => {
+    setOptions({
+        // Users deleting their own local state would only hurt themselves.
+        // They would lose access to rewards and stake that should be rightfully theirs.
+        untrustworthyMaps: false,
+        // Would like to turn this on but it would take more time to satisfy the theorem prover.
+        verifyArithmetic: false,
+      });
+      
     const P = Participant('Pool', {
         getPoolDetails: PoolDetails,
         readyForContribution: Fun([], Null),
     });
     const PC = Participant('PoolCreator', {});
     const C = API('Contributor', {
-        contribute: Fun([UInt], Null),
+        contribute: Fun([], Null),
 
     });
     const PA = API('PoolAPI', {
@@ -66,10 +74,12 @@ export const main =  Reach.App(() => {
     // the contribution amount plus the penalty amount.
     const startingContribution = contributionAmt + penaltyAmt;
     PC.pay(startingContribution);
+    commit();
 
     P.interact.readyForContribution()
 
     const awaitPoolAPI = (apifunc) => {
+        // commit()
         const [[], k] = call(apifunc).assume(() => check(this == P, "Must be called by the pool participant."));
         check(this == P, "Must be called by the pool participant.");
         k(null);
@@ -81,12 +91,11 @@ export const main =  Reach.App(() => {
     const paymentInterval = poolTimeOut / paymentFrequency;
     const contributors = new Set();
 
-    const [timedOut, numContributors] = // timeOut = paymentFrequency --> deprecated
-        parallelReduce([ false, 0 ],)
-          .invariant(
-              balance = startingContribution * numContributors
-              && contributors.Map.size == numContributors
-              && contributors.Map.size <= maxPersons
+    const [timedOut, numContributors] = 
+    parallelReduce([false, 0])
+        .invariant(balance() == startingContribution + contributionAmt * numContributors
+              && contributors.Map.size() == numContributors
+              && numContributors <= maxPersons
           )
           .while(!timedOut
             && numContributors < maxPersons) 
@@ -117,7 +126,7 @@ export const main =  Reach.App(() => {
              return [true, numContributors];
            });
 
-    if (paymentInterval > 0) {
+    // if (paymentInterval > 0) {
 
         // A for loop to transfer to all participants.
         // Update Phase to Finished.
@@ -147,7 +156,7 @@ export const main =  Reach.App(() => {
         //         awaitPoolAPI(PA.makePayment);
         //         return [true, numPayments];
         //       });
-    }
+    // }
     commit();
     exit();
 });
