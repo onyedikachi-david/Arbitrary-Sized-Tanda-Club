@@ -28,3 +28,5 @@ yarn-error.log*
 
 /src/contract/test.rsh
 /src/contract/helper.rsh
+/src/contract/dump.txt
+

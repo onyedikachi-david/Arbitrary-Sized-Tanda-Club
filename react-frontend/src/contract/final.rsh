@@ -80,16 +80,72 @@ export const main = Reach.App(() => {
 
     const contributors = new Set();
 
-    const [ended, numOfUsers, paidUsers, nextRound] = 
-        parallelReduce([false, 0, 0, true])
-            .invariant(balance() == startingContribution + numOfUsers * contributionAmt
+    var paidUsers = new Set();
+    var numOfUsers = UInt;
+    var ended = Bool;
+    invariant(paidUsers.Map.size() <= numOfUsers
+                && balance() == startingContribution + numOfUsers * contributionAmt
                 && contributors.Map.size() == numOfUsers
-                && numOfUsers == maxPersons
-            )
-            .while(!ended
-                && nextRound
-                && paidUsers <= numOfUsers
-                )
+                && numOfUsers <= maxPersons
+                && ended == false,);
+    while (paidUsers.Map.size() <= numOfUsers) {
+        commit()
+        // contribute
 
+        const [k] = 
+            call(C.contribute)
+                .assume(() => {check(!contributors.member(this));})
+                .pay(contributionAmt)
+        check(!contributors.member(this))
+        contributors.insert(this);
+        k(null);
+        numOfUsers = numOfUsers + 1;
+        commit();
+
+
+        // wait();
+
+        wait(relativeTime(duration));
+
+
+
+        // pay
+        const [k2] = 
+            call(PA.makePayment, contributionAmt)
+
+
+
+        // const [ended, numOfUsers, paidUsers, nextRound] = 
+        // parallelReduce([false, 0, 0, true])
+        //     .invariant(balance() == startingContribution + numOfUsers * contributionAmt
+        //         && contributors.Map.size() == numOfUsers
+        //         && numOfUsers == maxPersons
+        //     )
+        //     .while(!ended
+        //         && nextRound
+        //         && paidUsers <= numOfUsers
+        //         )
+        //     // check if I can call an "awaitAPI here"
+        //     .api(
+        //         C.contribute,
+        //         () => check(!contributors.member(this), "Already contributed."),
+        //         () => startingContribution,
+        //         (k) => {
+        //             check(!contributors.member(this), "Already contributed.");
+        //             contributors.insert(this);
+        //             k(null);
+        //             return [false, numContributors + 1];
+        //         }
+        //     )
+        //     .timeout(poolTimeOut, () => {
+        //         awaitPoolAPI(PA.contributionTimeOut);
+        //         // A for loop to transfer to all participants.
+        //         // Update Phase to FailContrib.
+        //         return [true, numContributors];
+        //       });
+
+        continue;
+
+    }
 
 })
