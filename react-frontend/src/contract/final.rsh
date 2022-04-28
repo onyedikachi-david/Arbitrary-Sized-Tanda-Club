@@ -26,7 +26,7 @@ export const main = Reach.App(() => {
     const PC = Participant('PoolCreator', {});
 
     const C = API('Contributor', {
-        contribut: Fun([], Null),
+        contribute: Fun([], Null),
     });
 
     const PA = API('PoolAPI', {
@@ -77,27 +77,36 @@ export const main = Reach.App(() => {
     commit();
 
     P.interact.readyForContribution()
+    P.publish();
 
     const contributors = new Set();
 
-    var paidUsers = new Set();
-    var numOfUsers = UInt;
-    var ended = Bool;
+    const paidUsers = new Set();
+    const numOfUsers = 0;
+    var ended = false;
     invariant(paidUsers.Map.size() <= numOfUsers
-                && balance() == startingContribution + numOfUsers * contributionAmt
+                
                 && contributors.Map.size() == numOfUsers
                 && numOfUsers <= maxPersons
-                && ended == false,);
-    while (paidUsers.Map.size() <= numOfUsers) {
-        commit()
-        // contribute
+                && ended == false
+                && paidUsers.Map.size() <= contributors.Map.size());
+    while (balance() == startingContribution + numOfUsers * contributionAmt) {
+        // commit()
 
-        const [k] = 
+//         const [ _, k4 ] =
+//     call(C.contribute)
+//       .pay((a) => a)
+
+//   k4(x);
+//   transfer(amtTup[0]).to(A);
+        // contribute
+commit();
+        const [_, k] = 
             call(C.contribute)
-                .assume(() => {check(!contributors.member(this));})
-                .pay(contributionAmt)
+                .assume(() => {check(!contributors.member(this))})
+                // .pay(contributionAmt)
         check(!contributors.member(this))
-        contributors.insert(this);
+        contributors.insert(this)
         k(null);
         numOfUsers = numOfUsers + 1;
         commit();
@@ -111,7 +120,12 @@ export const main = Reach.App(() => {
 
         // pay
         const [k2] = 
-            call(PA.makePayment, contributionAmt)
+            call(PA.makePayment)
+                .assume(() => {check(contributors.member(this));})
+                .pay()
+        check(contributors.member(this))
+        transfer(balance() / penaltyAmt * numOfUsers).to(this);
+        paidUsers.insert(this);
 
 
 
@@ -145,7 +159,7 @@ export const main = Reach.App(() => {
         //       });
 
         continue;
-
+// commit()
     }
 
 })
