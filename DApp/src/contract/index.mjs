@@ -1,66 +1,238 @@
 import {loadStdlib} from '@reach-sh/stdlib';
 import * as backend from './build/index.main.mjs';
-const stdlib = loadStdlib(process.env);
+const reach = loadStdlib(process.env);
 
-const startingBalance = stdlib.parseCurrency(200);
+// const startingBalance = stdlib.parseCurrency(20000);
 
-const contributors = await stdlib.newTestAccounts(4, startingBalance);
+// const contributors = await stdlib.newTestAccounts(4, startingBalance);
 
-const poolCreatorAcc = await stdlib.newTestAccounts(startingBalance)
+// const poolCreatorAcc = await stdlib.newTestAccounts(startingBalance)
 
-const PoolDetails = {
-    poolName: "Umunna Collectio",
-    poolDescription: "An Arbitrary sized tanda club. Where anyone can join, make a payment as specified an request for a pay after each cycle. This description is going to be 200 bytes long so I'm going to keep typing till",
-    contributionAmt: stdlib.parseCurrency(10),
-    penaltyAmt: stdlib.parseCurrency(5),
-    // maxPersons: 10,
-    // minPersons: 2,
-    duration: 30,
-    // paymentFrequency: "weekly",
-}
+// const PoolDetails = {
+//     poolName: "Umunna Collectio",
+//     poolDescription: "An Arbitrary sized tanda club. Where anyone can join, make a payment as specified an request for a pay after each cycle. This description is going to be 200 bytes long so I'm going to keep typing till",
+//     contributionAmt: stdlib.parseCurrency(10),
+//     penaltyAmt: stdlib.parseCurrency(5),
+//     duration: 30,
 
-const ctcPC = poolCreatorAcc.contract(backend);
+// }
 
-try {
-    await ctcPC.p.PoolCreator({
-        getPoolDetails: PoolDetails,
-        readyForContribution: () => {
-            console.log("The contract is ready For Contribution");
-            throw 42;
-        },
-    })
-} catch (e) {
-    console.log(e)
-    if (e !== 42) {
-        throw e;
+// const ctcPC = poolCreatorAcc.contract(backend);
+
+// try {
+//     await ctcPC.p.PoolCreator({
+//         getPoolDetails: PoolDetails,
+//         readyForContribution: () => {
+//             console.log("The contract is ready For Contribution");
+//             throw 42;
+//         },
+//     })
+// } catch (e) {
+//     console.log(e)
+//     if (e !== 42) {
+//         throw e;
+//     }
+// }
+
+// const ctcWho = (whoi) =>
+//     contributors[whoi].contract(backend, ctcPC.getInfo());
+
+// const contribute = async (whoi) => {
+//     const who = contributors[whoi];
+//     ctc = await ctcWho(who);
+//     console.log(`${stdlib.formatAddress(who)} contributed ${stdlib.formatCurrency(PoolDetails.contributionAmt)}`);
+//     await who.apis.Contributor.contribute();
+// }
+
+// const requestPayment = async (whoi) => {
+//     const who = contributors[whoi];
+//     ctc = await ctcWho(who);
+//     console.log(`${stdlib.formatAddress(who)} requested payment`);
+//     await who.apis.Any.requestPayment();
+// }
+
+// await contribute(0);
+// await contribute(1);
+// await contribute(2);
+// await contribute(3);
+// stdlib.wait(PoolDetails.duration);
+// console.log("Waiting for payment phase");
+
+// await requestPayment(0);
+// await requestPayment(1);
+// await requestPayment(2);
+// await requestPayment(3);
+
+(async () => {
+    console.log("Starting");
+    console.log("Creating accounts")
+
+    const bal = reach.parseCurrency(20000);
+    const nContributors = 5;
+    const accPoolCreator = await reach.newTestAccount(bal);
+    const accContributors = await reach.newTestAccounts(nContributors, bal);
+
+    const accbal = async (acc) => {
+        try {
+            return await reach.balanceOf(acc);
+        } catch (e) {
+            console.warn(e);
+            return 0;
+        }
     }
-}
+    const balance = async () => {
+        const t = [];
+        let tot = 0;
+        for (const acc of [accPoolCreator, ...accContributors]) {
+            const addr = (reach.formatAddress(acc)).slice(0, 12);
+            const bal = (await accbal(acc)).toNumber();
+            tot = tot + bal;
+            t.push({addr, bal});
+        }
+        t.push({addr: "Total", bal: tot});
+        console.table(t);
+    }
+    await balance();
 
-const ctcWho = (whoi) =>
-    contributors[whoi].contract(backend, ctcPC.getInfo());
+    console.log(`Launching the pool`)
 
-const contribute = async (whoi) => {
-    const who = contributors[whoi];
-    ctc = await ctcWho(who);
-    console.log(`${stdlib.formatAddress(who)} contributed ${stdlib.formatCurrency(PoolDetails.contributionAmt)}`);
-    await who.apis.Contributor.contribute();
-}
+    const ctcPC = accPoolCreator.contract(backend);
+    const ctcContributors = accContributors.map(acc => acc.contract(backend, ctcPC.getInfo()));
+    // const ctc
+    let resolveReadyForContributors = null;
+    const pReadyForContributors = new Promise(r => resolveReadyForContributors = r)
+    
+    console.log(`Deploying .......`);
+    const pPoolCreator = ctcPC.p.PoolCreator({
+        getPoolDetails: {
+            poolName: "Umunna Collectio",
+            poolDescription: "An Arbitrary sized tanda club. Where anyone can join, make a payment as specified an request for a pay after each cycle. This description is going to be 200 bytes long so I'm going to keep typing till",
+            contributionAmt: reach.parseCurrency(10),
+            penaltyAmt: reach.parseCurrency(5),
+            duration: 30,
+        },
+        readyForContribution: () => resolveReadyForContributors(),
+    });
 
-const requestPayment = async (whoi) => {
-    const who = contributors[whoi];
-    ctc = await ctcWho(who);
-    console.log(`${stdlib.formatAddress(who)} requested payment`);
-    await who.apis.Any.requestPayment();
-}
+    const ctcInfo = await ctcPC.getInfo();
+    console.log(`Contract deployed ${ctcInfo}`);
 
-await contribute(0);
-await contribute(1);
-await contribute(2);
-await contribute(3);
-stdlib.wait(PoolDetails.duration);
+    await pReadyForContributors;
+    console.log("Pool ready for contribution");
 
-await requestPayment(0);
-await requestPayment(1);
-await requestPayment(2);
-await requestPayment(3);
+    // ------------ Contributions ------------ //
+    // const contribute = async (whoi) => {
+    //     const who = accContributors[whoi];
+    //     const ctc = await ctcContributors[whoi];
+    //     console.log(`${reach.formatAddress(who)} contributed ${reach.formatCurrency(ctcInfo.contributionAmt)}`);
+    //     await who.apis.Contributor.contribute();
 
+    // }
+    const tryFn = async (lab, f) => {
+        const maxTries = 3;
+        let tries = 1;
+        const msg = () => `${lab} after trying ${tries} time(s)`
+        let err = null;
+        while (tries < maxTries) {
+          try {
+            const r = await f();
+            console.log(msg());
+            return r;
+          } catch (e) {
+            err = e;
+            tries++;
+          }
+        }
+        console.error(`Failed: ${msg()}`);
+        throw err;
+    }
+    
+    const tryApi = async (fname, verbed, i) =>
+        await tryFn(`Someone #${i} ${verbed}`, ctcContributors[i].apis.Contributor[fname]);
+    const tryRegister = async (i) => {
+        await tryApi('register', 'Registered', i)
+    };
+
+    // ------ Contribute API ----------------
+    // const tryCApi = async (fname, verbed, i) => {
+    //     await tryFn(`Someone #${i} ${verbed}`, ctcContributors[i].apis.Any[fname]);
+    //     await tryFn(`Pool  Creator #${accPoolCreator} Contributed`, ctcPC.apis.Any[contribute]);
+    // }
+    // const trycontribute = async (i) => {
+    //     await tryCApi('contribute', 'Contributed', i)
+    // };
+
+    // ------- Payment API ------------------
+    const tryPApi = async (fname, verbed, i) => {
+        await tryFn(`Someone #${i} ${verbed}`, ctcContributors[i].apis.Any[fname]);
+        await tryFn(`Pool Creator #${accPoolCreator} Requested`, ctcPC.apis.Any[fname]);
+    };
+
+    const tryRequest = async (i) => {
+        await tryPApi('requestPayment', 'Requested', i)
+    };
+
+    let phase;
+    do {
+        const ev = await ctcPC.events.PoolPhase.phase.next();
+        console.log(ev)
+        phase = ev.what[0][0]; // get the name of the phase from the event structure
+        switch (phase) {
+            // Contribution started
+            case "Contribution":
+                console.log("Contribution phase started");
+
+                // ------ Contribute API ----------------
+                const tryCApi = async (fname, verbed, i) => {
+                    await tryFn(`Someone #${i} ${verbed}`, ctcContributors[i].apis.Any[fname]);
+                    await tryFn(`Pool  Creator #${accPoolCreator} Contributed`, ctcPC.apis.Any[fname]);
+                }
+                const trycontribute = async (i) => {
+                    await tryCApi('contribute', 'Contributed', i)
+                };
+
+                const contrib = [];
+                for (let i = 0; i < nContributors; i++) {
+                    contrib.push(trycontribute(i));
+                    await contrib[i];
+                }
+                await Promise.all(contrib)
+
+                break;
+            
+            // Payment started
+            case "Payment":
+                console.info("Payment Phase started")
+            // ------- Payment API ------------------
+                const random = Math.floor(Math.random() * nContributors);
+                const tryPApi = async (fname, verbed, i) => {
+                    await tryFn(`Someone #${i} ${verbed}`, ctcContributors[i].apis.Any[fname]);
+                    // await tryFn(`Pool Creator #${accPoolCreator} Requested`, ctcPC.apis.Any[fname]);
+                };
+
+                const tryRequest = async (i) => {
+                    await tryPApi('requestPayment', 'Requested', i)
+                };
+
+                // const paid = [];
+                // for (let i = 0; i < nContributors; i++) {
+                //     paid.push(tryRequest(i));
+                //     await paid[i];
+                // }
+                // await Promise.all(paid)
+                await tryRequest(random);
+                break;
+            
+            // The contract is over
+            case "Finished":
+
+
+                break;
+        }
+    } while (phase != 'Finished');
+    await pPoolCreator;
+    // console.log("Pool created");
+
+
+
+})();
