@@ -38,6 +38,7 @@ export const main = Reach.App(() => {
     const A = API('Any', {
         requestPayment: Fun([], Null),
         contribute: Fun([], Null),
+        poolTimeout: Fun([], Null),
     });
 
     const Phase = Data({ Contribution: Null, Payment: Null, Finished: Null});
@@ -94,16 +95,16 @@ export const main = Reach.App(() => {
         // -- add the user to the set of users who has contributed.
         PC.publish()
         PP.phase(Phase.Contribution())
-        const [ timeRemaining, keepGoing ] = makeDeadline(deadline);
-        const [IusersPaid, InumUsers] = 
-        parallelReduce([ usersPaid, numUsers ])
+        // const [ timeRemaining, keepGoing ] = makeDeadline(deadline);
+        const [timedOut, IusersPaid, InumUsers] = 
+        parallelReduce([false, usersPaid, numUsers ])
           .invariant(usersPaid <= numUsers)
-          .while(keepGoing())
+          .while(!timedOut)
           .api(C.register,
             (() => penaltyAmt),
             ((callBack) => {
                 callBack(null)
-                return [IusersPaid, InumUsers]
+                return [false, IusersPaid, InumUsers]
             })
             )
           .api(
@@ -113,10 +114,19 @@ export const main = Reach.App(() => {
                 contributorsSet.insert(this);
                 returnFunc(null)
                 // InumUsers = InumUsers +  1;
-                return [IusersPaid, InumUsers]
+                return [false, IusersPaid, InumUsers]
               })
           )
-          .timeRemaining(timeRemaining());;
+          .timeout(deadline, () => {
+            //   commit();
+            PC.publish()
+            commit();
+              const [[], k] =
+              call(A.poolTimeout)
+                .pay(() => 0)
+                k(null);
+              return [true, IusersPaid, InumUsers]
+          });
        
 
         // payment time is reached

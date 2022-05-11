@@ -109,7 +109,7 @@ const reach = loadStdlib(process.env);
             poolDescription: "An Arbitrary sized tanda club. Where anyone can join, make a payment as specified an request for a pay after each cycle. This description is going to be 200 bytes long so I'm going to keep typing till",
             contributionAmt: reach.parseCurrency(10),
             penaltyAmt: reach.parseCurrency(5),
-            duration: 30,
+            duration: 3,
         },
         readyForContribution: () => resolveReadyForContributors(),
     });
@@ -147,11 +147,11 @@ const reach = loadStdlib(process.env);
         throw err;
     }
     
-    const tryApi = async (fname, verbed, i) =>
-        await tryFn(`Someone #${i} ${verbed}`, ctcContributors[i].apis.Contributor[fname]);
-    const tryRegister = async (i) => {
-        await tryApi('register', 'Registered', i)
-    };
+    // const tryApi = async (fname, verbed, i) =>
+    //     await tryFn(`Someone #${i} ${verbed}`, ctcContributors[i].apis.Contributor[fname]);
+    // const tryRegister = async (i) => {
+    //     await tryApi('register', 'Registered', i)
+    // };
 
     // ------ Contribute API ----------------
     // const tryCApi = async (fname, verbed, i) => {
@@ -163,29 +163,75 @@ const reach = loadStdlib(process.env);
     // };
 
     // ------- Payment API ------------------
-    const tryPApi = async (fname, verbed, i) => {
-        await tryFn(`Someone #${i} ${verbed}`, ctcContributors[i].apis.Any[fname]);
-        await tryFn(`Pool Creator #${accPoolCreator} Requested`, ctcPC.apis.Any[fname]);
-    };
+    // const tryPApi = async (fname, verbed, i) => {
+    //     await tryFn(`Someone #${i} ${verbed}`, ctcContributors[i].apis.Any[fname]);
+    //     await tryFn(`Pool Creator #${accPoolCreator} Requested`, ctcPC.apis.Any[fname]);
+    // };
 
-    const tryRequest = async (i) => {
-        await tryPApi('requestPayment', 'Requested', i)
-    };
+    // const tryRequest = async (i) => {
+    //     await tryPApi('requestPayment', 'Requested', i)
+    // };
+
+    function pretty(r) {
+        if (!r) {
+          return r;
+        } else if (typeof r === 'string') {
+          return r;
+        } else if (r._isBigNumber) {
+          return r.toString();
+        } else if (r.networkAccount) {
+          if (r.networkAccount.addr) {
+            return r.networkAccount.addr.slice(0, 8);
+          } else if (r.networkAccount.address) {
+            return r.networkAccount.address.slice(0, 8);
+          } else {
+            return '<some acc>';
+          }
+        } else if (Array.isArray(r) && r[0] == 'Some') {
+          return pretty(r[1]);
+        } else if (Array.isArray(r)) {
+          return r.map((x) => pretty(x));
+        } else if (Object.keys(r).length > 0) {
+          const o = {};
+          for (const k in r) { o[k] = pretty(r[k]); }
+          return o;
+        } else if (r.toString) {
+          return r.toString();
+        } else {
+          return r
+        }
+      }
 
     let phase;
     do {
         const ev = await ctcPC.events.PoolPhase.phase.next();
-        console.log(ev)
+        console.log(pretty(ev))
         phase = ev.what[0][0]; // get the name of the phase from the event structure
         switch (phase) {
             // Contribution started
             case "Contribution":
-                console.log("Contribution phase started");
+                console.log("Registration phase started");
+                // ---------------- Registration API ------------
+
+                const tryApi = async (fname, verbed, i) =>
+                    await tryFn(`Someone #${i} ${verbed}`, ctcContributors[i].apis.Contributor[fname]);
+                const tryRegister = async (i) => {
+                    await tryApi('register', 'Registered', i)
+                };
+
+                const reg = [];
+                for (let i = 0; i < nContributors; i++) {
+                    reg.push(tryRegister(i));
+                    await reg[i];
+                }
+                await Promise.all(reg)
+                await balance()
 
                 // ------ Contribute API ----------------
+                console.log("Contribution phase started");
                 const tryCApi = async (fname, verbed, i) => {
                     await tryFn(`Someone #${i} ${verbed}`, ctcContributors[i].apis.Any[fname]);
-                    await tryFn(`Pool  Creator #${accPoolCreator} Contributed`, ctcPC.apis.Any[fname]);
+                    // await tryFn(`Pool  Creator #${accPoolCreator} Contributed`, ctcPC.apis.Any[fname]);
                 }
                 const trycontribute = async (i) => {
                     await tryCApi('contribute', 'Contributed', i)
@@ -197,7 +243,10 @@ const reach = loadStdlib(process.env);
                     await contrib[i];
                 }
                 await Promise.all(contrib)
-
+                await tryFn(`Pool  Creator #${accPoolCreator} Contributed`, ctcPC.apis.Any.contribute);
+                await reach.wait(8);
+                await ctcPC.apis.Any.poolTimeout();
+                console.warn("Contribution timeout occurred");
                 break;
             
             // Payment started
@@ -213,14 +262,8 @@ const reach = loadStdlib(process.env);
                 const tryRequest = async (i) => {
                     await tryPApi('requestPayment', 'Requested', i)
                 };
-
-                // const paid = [];
-                // for (let i = 0; i < nContributors; i++) {
-                //     paid.push(tryRequest(i));
-                //     await paid[i];
-                // }
-                // await Promise.all(paid)
                 await tryRequest(random);
+                // await ctcPC.
                 break;
             
             // The contract is over
