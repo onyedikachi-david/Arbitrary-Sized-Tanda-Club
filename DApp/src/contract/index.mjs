@@ -110,6 +110,7 @@ const reach = loadStdlib(process.env);
             contributionAmt: reach.parseCurrency(10),
             penaltyAmt: reach.parseCurrency(5),
             duration: 3,
+            maxUsers: 4,
         },
         readyForContribution: () => resolveReadyForContributors(),
     });
@@ -208,9 +209,9 @@ const reach = loadStdlib(process.env);
         console.log(pretty(ev))
         phase = ev.what[0][0]; // get the name of the phase from the event structure
         switch (phase) {
-            // Contribution started
-            case "Contribution":
-                console.log("Registration phase started");
+
+            case "Registration":
+              console.log("Registration phase started");
                 // ---------------- Registration API ------------
 
                 const tryApi = async (fname, verbed, i) =>
@@ -226,7 +227,11 @@ const reach = loadStdlib(process.env);
                 }
                 await Promise.all(reg)
                 await balance()
+                break;
 
+            // Contribution started
+            case "Contribution":
+                
                 // ------ Contribute API ----------------
                 console.log("Contribution phase started");
                 const tryCApi = async (fname, verbed, i) => {
@@ -244,8 +249,8 @@ const reach = loadStdlib(process.env);
                 }
                 await Promise.all(contrib)
                 await tryFn(`Pool  Creator #${accPoolCreator} Contributed`, ctcPC.apis.Any.contribute);
-                await reach.wait(8);
-                await ctcPC.apis.Any.poolTimeout();
+                // await reach.wait(8);
+                // await ctcPC.apis.Any.poolTimeout();
                 console.warn("Contribution timeout occurred");
                 break;
             

@@ -24,6 +24,7 @@ const PoolDetails = Object({
     contributionAmt: UInt, // amount to be paid
     penaltyAmt: UInt, // Amount to be deducted from the user, if he fails to contribute.
     duration: UInt, // weeks, months, years.
+    maxUsers: UInt, // max amount of contribution
 });
 
 export const main = Reach.App(() => {
@@ -38,10 +39,10 @@ export const main = Reach.App(() => {
     const A = API('Any', {
         requestPayment: Fun([], Null),
         contribute: Fun([], Null),
-        poolTimeout: Fun([], Null),
+        // poolTimeout: Fun([], Null),
     });
 
-    const Phase = Data({ Contribution: Null, Payment: Null, Finished: Null});
+    const Phase = Data({ Registration: Null, Contribution: Null, Payment: Null, Finished: Null});
     const PP = Events('PoolPhase', { phase: [Phase] });
 
     init();
@@ -63,6 +64,7 @@ export const main = Reach.App(() => {
         contributionAmt,
         penaltyAmt,
         duration,
+        maxUsers,
     } = poolDetails;
 
     const startingContribution = contributionAmt + penaltyAmt;
@@ -78,9 +80,32 @@ export const main = Reach.App(() => {
     // all contributors has been paid.
     // while every user is yet to get paid
     // continue the loop till all has been paid
+    PP.phase(Phase.Registration())
+    const RegisteredUsers = new Set();
+    const [numOfUsers] = 
+        parallelReduce([ 0 ])
+          .invariant(numOfUsers >= 0)
+          .while(numOfUsers <= maxUsers)
+          .api(C.register,
+            (() => {check(!RegisteredUsers.member(this))}),
+            () => penaltyAmt,
+            ((callBack) => {
+                RegisteredUsers.insert(this)
+                callBack(null)
+                return [numOfUsers + 1]
+            }))
+    // awaitRegistionApi(C.register);
 
-    const start = lastConsensusTime() + 2;
-    const deadline = start + duration;
+    // const RegisteredUsers = new Set();
+    // commit();
+    // const [[], k] = call(C.register)
+    //         .assume(() => check(!RegisteredUsers.member(this)))
+    //         .pay(() => penaltyAmt)
+    //     RegisteredUsers.insert(this);
+    //     k(null);
+    
+    // const start = lastConsensusTime() + 2;
+    // const deadline = start + duration;
 
     const usersPaidSet = new Set();
     const contributorsSet = new Set();
@@ -100,13 +125,6 @@ export const main = Reach.App(() => {
         parallelReduce([false, usersPaid, numUsers ])
           .invariant(usersPaid <= numUsers)
           .while(!timedOut)
-          .api(C.register,
-            (() => penaltyAmt),
-            ((callBack) => {
-                callBack(null)
-                return [false, IusersPaid, InumUsers]
-            })
-            )
           .api(
               A.contribute,
               (() => contributionAmt),
@@ -117,16 +135,19 @@ export const main = Reach.App(() => {
                 return [false, IusersPaid, InumUsers]
               })
           )
-          .timeout(deadline, () => {
+          .timeout(duration, () => {
             //   commit();
             PC.publish()
-            commit();
-              const [[], k] =
-              call(A.poolTimeout)
-                .pay(() => 0)
-                k(null);
+            // commit();
+            //   const [[], k] =
+            //   call(A.poolTimeout)
+            //     .pay(() => 0)
+            //     k(null);
               return [true, IusersPaid, InumUsers]
           });
+        commit();
+        wait(absoluteTime(lastConsensusTime() + duration));
+        PC.publish()
        
 
         // payment time is reached
@@ -152,6 +173,7 @@ export const main = Reach.App(() => {
             usersPaidSet.insert(this);
             // usersPaid + 1;
             returnPayFunc(null);
+        
 
         [usersPaid, numUsers] = [usersPaid + 1, numUsers + 1];
         continue;
