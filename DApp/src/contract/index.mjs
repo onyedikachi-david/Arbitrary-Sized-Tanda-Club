@@ -249,7 +249,7 @@ const reach = loadStdlib(process.env);
                 }
                 await Promise.all(contrib)
                 await tryFn(`Pool  Creator #${accPoolCreator} Contributed`, ctcPC.apis.Any.contribute);
-                // await reach.wait(8);
+                await reach.wait(3);
                 // await ctcPC.apis.Any.poolTimeout();
                 console.warn("Contribution timeout occurred");
                 break;

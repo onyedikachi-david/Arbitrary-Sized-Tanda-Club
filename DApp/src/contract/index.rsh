@@ -122,9 +122,9 @@ export const main = Reach.App(() => {
         PP.phase(Phase.Contribution())
         // const [ timeRemaining, keepGoing ] = makeDeadline(deadline);
         const [timedOut, IusersPaid, InumUsers] = 
-        parallelReduce([false, usersPaid, numUsers ])
+        parallelReduce([true, usersPaid, numUsers ])
           .invariant(usersPaid <= numUsers)
-          .while(!timedOut)
+          .while(timedOut)
           .api(
               A.contribute,
               (() => contributionAmt),
@@ -132,7 +132,7 @@ export const main = Reach.App(() => {
                 contributorsSet.insert(this);
                 returnFunc(null)
                 // InumUsers = InumUsers +  1;
-                return [false, IusersPaid, InumUsers]
+                return [true, IusersPaid, InumUsers]
               })
           )
           .timeout(duration, () => {
@@ -143,7 +143,7 @@ export const main = Reach.App(() => {
             //   call(A.poolTimeout)
             //     .pay(() => 0)
             //     k(null);
-              return [true, IusersPaid, InumUsers]
+              return [false, IusersPaid, InumUsers]
           });
         commit();
         wait(absoluteTime(lastConsensusTime() + duration));
