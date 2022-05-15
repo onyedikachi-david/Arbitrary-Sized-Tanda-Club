@@ -252,6 +252,7 @@ const reach = loadStdlib(process.env);
                 await reach.wait(3);
                 // await ctcPC.apis.Any.poolTimeout();
                 console.warn("Contribution timeout occurred");
+                await balance();
                 break;
             
             // Payment started
@@ -268,7 +269,7 @@ const reach = loadStdlib(process.env);
                     await tryPApi('requestPayment', 'Requested', i)
                 };
                 await tryRequest(random);
-                // await ctcPC.
+                await balance()
                 break;
             
             // The contract is over
