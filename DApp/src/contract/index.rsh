@@ -42,8 +42,16 @@ export const main = Reach.App(() => {
         // poolTimeout: Fun([], Null),
     });
 
+    const V = View({
+        poolDetails: PoolDetails,
+    })
+
     const Phase = Data({ Registration: Null, Contribution: Null, Payment: Null, Finished: Null});
     const PP = Events('PoolPhase', { phase: [Phase] });
+    const U = Events('Update', {
+        info: [Address, UInt],
+        // amt: [UInt],
+    })
 
     init();
 
@@ -59,6 +67,7 @@ export const main = Reach.App(() => {
     });
 
     PC.publish(poolDetails);
+    V.poolDetails.set(poolDetails);
     checkPoolStructure(poolDetails);
     const {
         contributionAmt,
@@ -70,6 +79,7 @@ export const main = Reach.App(() => {
     const startingContribution = contributionAmt + penaltyAmt;
     commit();
     PC.pay(startingContribution);
+    U.info(this, startingContribution);
     PC.interact.readyForContribution();
     commit();
     PC.publish()
@@ -91,6 +101,7 @@ export const main = Reach.App(() => {
             () => penaltyAmt,
             ((callBack) => {
                 RegisteredUsers.insert(this)
+                U.info(this, penaltyAmt)
                 callBack(null)
                 return [numOfUsers + 1]
             }))
@@ -120,9 +131,13 @@ export const main = Reach.App(() => {
         // -- add the user to the set of users who has contributed.
         PC.publish()
         PP.phase(Phase.Contribution())
+        // @todo Contract is not synched with front end, 
+        // put one interact call before parallel reduce, 
+        // then it syncs and api call will work.
+        
         // const [ timeRemaining, keepGoing ] = makeDeadline(deadline);
         const [timedOut, IusersPaid, InumUsers] = 
-        parallelReduce([true, usersPaid, numUsers ])
+        parallelReduce([true, usersPaid, maxUsers ])
           .invariant(usersPaid <= numUsers)
           .while(timedOut)
           .api(
@@ -130,6 +145,7 @@ export const main = Reach.App(() => {
               (() => contributionAmt),
               ((returnFunc) => {
                 contributorsSet.insert(this);
+                U.info(this, contributionAmt);
                 returnFunc(null)
                 // InumUsers = InumUsers +  1;
                 return [true, IusersPaid, InumUsers]
