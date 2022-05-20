@@ -154,7 +154,8 @@ exports.Deploy = class extends React.Component {
 exports.Deploying = class extends React.Component {
   render() {
     return (
-      <div>Creating pool... please sign the transactions to deploy the contract and fund it with rewards.</div>
+      <div>Creating pool... 
+        please sign the transactions to deploy the contract and fund it with rewards.</div>
     );
   }
 }
