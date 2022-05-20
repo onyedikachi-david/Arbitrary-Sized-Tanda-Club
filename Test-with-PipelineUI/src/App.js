@@ -15,9 +15,9 @@ const reach = loadStdlib('ALGO')
 const myEnv = reach.providerEnvByName('LocalHost');
 console.log(myEnv)
 Object.assign(myEnv, {
-  ALGO_SERVER:"https://4180-headlinedes-reachmorrag-pjs8rl3usdn.ws-eu45.gitpod.io/",
+  ALGO_SERVER:"http://localhost:4180/",
   ALGO_PORT: "",
-  ALGO_INDEXER_SERVER: "https://8980-headlinedes-reachmorrag-pjs8rl3usdn.ws-eu45.gitpod.io/",
+  ALGO_INDEXER_SERVER: "http://localhost:8980/",
   // https://8980-headlinedes-reachmorrag-pjs8rl3usdn.ws-eu45.gitpod.io/
   ALGO_INDEXER_PORT: "",
   REACH_ISOLATED_NETWORK: "yes",

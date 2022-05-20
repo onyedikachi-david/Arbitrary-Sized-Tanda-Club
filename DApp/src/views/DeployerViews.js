@@ -20,7 +20,7 @@ const defaultDescription = "A brief description of the pool.";
 const defaultContributionAmt = 10;
 const defaultPenaltyAmt = 5;
 const defaultDuration = 4;
-const defaultMaxUsers = 2;
+const defaultMaxUsers = 1;
 
 exports.SetOpts = class extends React.Component {
   constructor(props) {
@@ -143,8 +143,7 @@ exports.Deploy = class extends React.Component {
     const {parent} = this.props;
     return (
       <div>
-        <button
-          onClick={() => parent.deploy()}
+        <button className="btn" onClick={() => parent.deploy()}
         >Create Staking Pool</button>
       </div>
     );
@@ -163,18 +162,18 @@ exports.Deploying = class extends React.Component {
 exports.Deployed = class extends React.Component {
   getApplicationId() {
     const {ctcInfoStr} = this.props;
-    localStorage.setItem('ApplicationID', ctcInfoStr);
-    return ctcInfoStr;
+    localStorage.setItem('ApplicationID', ctcInfoStr.toString());
+    return ctcInfoStr.toString();
   }
 
   render() {
     const {connector} = this.props;
-    const thing = connector == 'ALGO' ? 'Application ID' : 'contract address';
+    const thing = connector === 'ALGO' ? 'Application ID' : 'contract address';
     return (
       <React.Fragment>
         <main>Staking Pool created!</main>
         <p>The {thing} is</p>
-        <p>{this.getApplicationId()}</p>
+        <b>{this.getApplicationId()}</b>
       </React.Fragment>
     );
   }

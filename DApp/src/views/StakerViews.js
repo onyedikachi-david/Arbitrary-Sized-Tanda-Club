@@ -5,11 +5,16 @@ const exports = {};
 exports.Wrapper = class extends React.Component {
   render() {
     const {content} = this.props;
+    console.log(content.props.dappEvents)
     return (
+      <>
       <div className="MainContent">
         <h2>Staker</h2>
+        <h3>{content.props.phase}</h3>
+        <h3>{content.props.dappEvents}</h3>
         {content}
       </div>
+      </>
     );
   }
 }
@@ -26,24 +31,26 @@ exports.Attach = class extends React.Component {
     const {ctcInfoStr} = this.state || {};
     const thing = connector == 'ALGO' ? 'Application ID' : 'contract address';
     return (
-      <div>
+      <div class="form-style-5">
         Please paste the {thing} of the staking pool.
         <br />
         <br />
+        <fieldset>
         <input
           onChange={(e) => this.setState({ctcInfoStr: e.currentTarget.value})}
           spellCheck="false"
           type='text'
           value={ctcInfoStr}
         />
-        <br />
-        <br />
+        </fieldset>
         <button
-          className='Staker SmallButton'
+          className="btn"
           disabled={!ctcInfoStr}
           onClick={() => parent.attach(ctcInfoStr)}
         >Attach</button>
+        {/* </fieldset> */}
       </div>
+      
     );
   }
 }
@@ -98,29 +105,58 @@ exports.ApplicationInfo = class extends React.Component {
           <h1>This reward period ends on</h1>
           <p>round {end}</p>
           <p>(Now is approximately round {now})</p> */}
-
-          <input
+          <div class="form-style-5">
+          <fieldset>
+          <input 
             onChange={(e) => this.setState({amt: e.currentTarget.value})}
             spellCheck="false"
             type='number'
             placeholder={defaultAmt}
             value={this.state.amt}
           />
-          <br />
-          <button onClick={() => parent.stake()}>
+          </fieldset>
+          </div>
+         
+          {/* <br /> */}
+
+
+	<div class="section full-height">
+      	<input class="modal-btn" type="checkbox" id="modal-btn" name="modal-btn"/>
+      	<label for="modal-btn">Open Modal <i class="uil uil-expand-arrows"></i></label> 		
+      	<div class="modal">		
+	      	<div class="modal-wrap">	
+				{/* <img src="https://assets.codepen.io/1462889/sl3.jpg" alt=""/>	
+	      		<p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.</p>	          		 */}
+
+<div className='divbtn'>
+            <button className="btn" onClick={() => parent.register()}>
             Register!
           </button>
-          <button onClick={() => parent.halt()}>
-            Withdraw
+          <button className="btn" onClick={() => parent.contribute()}>
+            Contribute
           </button>
+          {/* <span>---------------------------------------------</span> */}
           <hr />
-          <button onClick={() => parent.harvest()}>
-            HARVEST!
+          <button className={`${this.props.phase !== 'Payment' ? "btn hide" : "btn "} `} disabled={this.props.phase !== 'Payment'} onClick={() => parent.request()}>
+            Request Payment
           </button>
-          <br />
-          {/* <button disabled={now < end || 0 < totalStaked} onClick={() => parent.halt()}>
-            Halt
-          </button> */}
+
+          {/* <hr /> */}
+
+          <button className="btn" onClick={() => parent.checkP()}>
+            Check current phase!
+          </button>
+          <button className="btn" onClick={() => parent.checkU()}>
+            Check latest Update
+          </button>
+
+         
+          
+          </div>
+	      	</div>			          		
+      	</div>		
+	</div>
+          
       </main>
     );
   }

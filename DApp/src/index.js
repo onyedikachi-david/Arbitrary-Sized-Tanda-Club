@@ -19,25 +19,27 @@ let reach;
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {view: 'SelectNetwork', date: new Date()};
-    this.tick = this.tick.bind(this)
+    this.state = {view: 'SelectNetwork', 
+    // date: new Date()
+  };
+    // this.tick = this.tick.bind(this)
   }
-  componentDidMount() {
-    this.timerID = setInterval(
-      () => this.tick(),
-      1000
-    );
-  }
+  // componentDidMount() {
+  //   this.timerID = setInterval(
+  //     () => this.tick(),
+  //     1000
+  //   );
+  // }
 
-  componentWillUnmount() {
-    clearInterval(this.timerID);
-  }
+  // componentWillUnmount() {
+  //   clearInterval(this.timerID);
+  // }
 
-  tick() {
-    this.setState({
-      date: new Date()
-    });
-  }
+  // tick() {
+  //   this.setState({
+  //     date: new Date()
+  //   });
+  // }
 
 
   async selectNetwork(REACH_CONNECTOR_MODE, providerEnv) {
@@ -92,7 +94,7 @@ class Deployer extends React.Component {
     const deployerP = ctc.p.PoolCreator({
       getPoolDetails,
       readyForContribution: (async () => {
-        const ctcInfoStr = JSON.stringify(await ctc.getInfo(), null, 2);
+        const ctcInfoStr = await ctc.getInfo();
         thiz.setState({view: 'Deployed', ctcInfoStr});
       }),
     });
@@ -107,13 +109,34 @@ class Deployer extends React.Component {
 class Staker extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {view: 'Attach', dappEvents: [], }; // XXX create view
+    this.state = {view: 'Attach', dappEvents: '', phase: ''}; // XXX create view
+    this.setUserUpdates = this.setUserUpdates.bind(this);
+    // this.eM = this.state.ctc.events
   }
+
+  // componentDidMount() {
+  //   // this.a = this.state.ctc.events
+  //   const bla = this.eM.Update.info.monitor(this.setUserUpdates);
+  //   console.log(bla);
+  //   // a.Update.info.monitor(this.setUserUpdates());
+  //   // await ctc.events.Update.info.monitor(this.setUserUpdates())
+  // }
+
+  // componentWillUnmount() {
+  //   // clearInterval(this.a);
+  // }
+
+  // const callme = async () => {
+  //   const {acc, ctc} = this.state;
+
+  //   return eM.Update.info.monitor(this.setUserUpdates)
+  // }
+  // componentDidUpdate(prevProps, prevState)
 
   async _refreshInfo(acc, ctc) {
     const runView = async (vname, ...args) => {
       const res = await ctc.views[vname](...args);
-      if (res[0] != 'Some') { console.warn(vname, res); return; }
+      if (res[0] !== 'Some') { console.warn(vname, res); return; }
       return pretty(res);
     }
     const runViews = async (vs) => {
@@ -167,13 +190,32 @@ class Staker extends React.Component {
     await this._refreshInfo(acc, ctc);
   }
 
+  async _eventU() {
+    const {acc, ctc} = this.state;
+    console.log(`calling event: `);
+    const res = await ctc.events.Update.info.next();
+    console.log(res.what[0]);
+    this.setState({dappEvents: this.state.dappEvents + '\n' + res.what[0] +"----" + res.what[1]});
+    await this._refreshInfo(acc, ctc)
+  }
   async _event() {
     const {acc, ctc} = this.state;
     console.log(`calling event: `);
-    const res = await ctc.events.Update.info.monitor(this.setUserUpdates());
-    console.log(pretty(res));
+    const res = await ctc.events.PoolPhase.phase.next();
+    console.log(res.what[0][0]);
+    this.setState({phase: this.state.phase + '\n' + res.what[0][0]});
     await this._refreshInfo(acc, ctc)
   }
+
+
+  // async _monitorEvent() {
+  //   const {acc, ctc} = this.state;
+  //   console.log(`calling event: `);
+  //   const res = await ctc.events.Update.info.monitor(this.setUserUpdates());
+  //   console.log(pretty(res));
+  //   this.setState({dappEvents: this.state.dappEvents + '\n' + pretty(res.what[0][0])});
+  //   await this._refreshInfo(acc, ctc)
+  // }
 
   async _view(which, name, ...args) {
     const {acc, ctc} = this.state;
@@ -183,26 +225,29 @@ class Staker extends React.Component {
     await this._refreshInfo(acc, ctc);
   }
 
-  async stake() {
+  async register() {
     return this._api('Contributor', 'register');
   }
 
   async setUserUpdates({when, what}) {
-    console.log(`calling setUserUpdates: ${when} ${what}`);
+    console.log(`response from setUserUpdate: ${when} ${pretty(what)}`);
   }
 
-  async harvest() {
+  async contribute() {
     return this._api('Any', 'contribute');
   }
 
-  async withdraw(amt) {
-    return this._api('Staker', 'withdraw');
+  async request() {
+    return this._api('Any', 'requestPayment');
   }
 
-  async halt() {
+  async checkP() {
     return this._event();
   }
 
+ async checkU() {
+    return this._eventU();
+  }
   render() {
     // console.info('Staker\'s props!', this.props);
     return renderView(this, StakerViews);

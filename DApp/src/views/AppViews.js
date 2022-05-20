@@ -55,14 +55,14 @@ exports.Wrapper = class extends React.Component {
           </div>
         </div>
 
-        <div className="bottom-area">
+        {/* <div className="bottom-area">
           <div className="container">
             <button className="toggle-btn">
               <i className="far fa-moon"></i>
               <i className="far fa-sun"></i>
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
     </main>
     </div>
