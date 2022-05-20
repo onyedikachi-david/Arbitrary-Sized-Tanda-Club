@@ -1,0 +1,589 @@
+#lang ll
+parts {
+  "Any_contribute" = interact {
+    in = IT_Fun [] Tuple(),
+    out = IT_Fun [Tuple(),Null] Null},
+  "Any_requestPayment" = interact {
+    in = IT_Fun [] Tuple(),
+    out = IT_Fun [Tuple(),Null] Null},
+  "Contributor_register" = interact {
+    in = IT_Fun [] Tuple(),
+    out = IT_Fun [Tuple(),Null] Null},
+  "PoolCreator" = interact {
+    getPoolDetails = IT_Val Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)}),
+    readyForContribution = IT_Fun [] Null}};
+
+// maps
+{
+  map0 = Null,
+  map1 = Null,
+  map2 = Null}
+// initialization
+
+{
+  }
+{
+  Nothing = {
+    poolDetails = IT_Val Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)})}}
+{
+  Just "Any" = {
+    contribute = ("Any_contribute", IT_Fun [] Null),
+    requestPayment = ("Any_requestPayment", IT_Fun [] Null)},
+  Just "Contributor" = {
+    register = ("Contributor_register", IT_Fun [] Null)}}
+{
+  Any_contribute = Nothing,
+  Any_requestPayment = Nothing,
+  Contributor_register = Nothing}
+{
+  Just "PoolPhase" = {
+    phase = [Data({"Contribution": Null, "Finished": Null, "Payment": Null, "Registration": Null})]},
+  Just "Update" = {
+    info = [Address, UInt]}}
+const initialInfo/292 : Tuple(UInt, UInt, Bool)* = [0, 0, false ];
+const tokInfos/290 : Array(Tuple(UInt, UInt, Bool), 0)* = array(Tuple(UInt, UInt, Bool), []);
+const tokens/291 : Array(Token, 0)* = array(Token, []);
+const v5 : Object({"i": UInt, "sign": Bool})* = {
+  i = 0,
+  sign = true};
+const v7 : Object({"i": UInt, "sign": Bool})* = {
+  i = 0,
+  sign = true};
+only(Left "PoolCreator") {
+  const poolDetails/19 : Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)})* = "PoolCreator".interact.getPoolDetails;
+  const v20 : UInt* = poolDetails/19.contributionAmt;
+  const v21 : UInt* = poolDetails/19.duration;
+  const v22 : UInt* = poolDetails/19.maxUsers;
+  const v23 : UInt* = poolDetails/19.penaltyAmt;
+  const v24 : Bytes(200)* = poolDetails/19.poolDescription;
+  const v25 : Bytes(16)* = poolDetails/19.poolName;
+   };
+only(Left "Contributor_register") {
+   };
+only(Left "Any_contribute") {
+   };
+only(Left "Any_requestPayment") {
+   };
+only(Left "PoolCreator") {
+  const v27 : Address* = selfAddress("PoolCreator", False, 26 )();
+  let v28 : Null;
+  let v29 : Null;
+  const v30 : UInt* = cps/19.contributionAmt;
+  const penalty/31 : UInt* = v30 / 2;
+  const v32 : UInt* = cps/19.penaltyAmt;
+  const v33 : Bool* = v32 == penalty/31;
+  claim(CT_Assume False)(v33, Just "Penalty amount is not half of the contribution amount.");
+  const v34 : UInt* = cps/19.contributionAmt;
+  const v35 : Bool* = v34 > 0;
+  claim(CT_Assume False)(v35, Just "Contribution amount cannot be zero.");
+  v29 : Null = null;
+  v28 : Null = null;
+   };
+only(Left "PoolCreator") {
+   };
+publish(@0)
+  .case("PoolCreator").send({
+    isClass = False,
+    msg = [poolDetails/19],
+    pay = [0, ],
+    when = true})
+  .recv({
+    didSend = didPublish/40 : Bool,
+    from = PoolCreator/36 : Address,
+    msg = [poolDetails/37 : Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)})],
+    secs = thisConsensusSecs/39 : UInt,
+    time = thisConsensusTime/38 : UInt}){
+    timeOrder(>, Nothing, thisConsensusTime/38 : UInt);
+    timeOrder(>=, Nothing, thisConsensusSecs/39 : UInt);
+    checkPay(0, None);
+    const v41 : UInt* = poolDetails/37.contributionAmt;
+    const v42 : UInt* = poolDetails/37.duration;
+    const v43 : UInt* = poolDetails/37.maxUsers;
+    const v44 : UInt* = poolDetails/37.penaltyAmt;
+    const v45 : Bytes(200)* = poolDetails/37.poolDescription;
+    const v46 : Bytes(16)* = poolDetails/37.poolName;
+    view(Nothing).poolDetails.is(Just export (Nothing) => {
+    return poolDetails/37;})
+    let v47 : Null;
+    const v48 : UInt* = cps/37.contributionAmt;
+    const penalty/49 : UInt* = v48 / 2;
+    const v50 : UInt* = cps/37.penaltyAmt;
+    const v51 : Bool* = v50 == penalty/49;
+    claim(CT_Require)(v51, Just "Penalty amount is not half of the contribution amount.");
+    const v52 : UInt* = cps/37.contributionAmt;
+    const v53 : Bool* = v52 > 0;
+    claim(CT_Require)(v53, Just "Contribution amount cannot be zero.");
+    v47 : Null = null;
+    const contributionAmt/54 : UInt* = poolDetails/37.contributionAmt;
+    const penaltyAmt/55 : UInt* = poolDetails/37.penaltyAmt;
+    const duration/56 : UInt* = poolDetails/37.duration;
+    const InumUsers/57 : UInt* = poolDetails/37.maxUsers;
+    const startingContribution/58 : UInt* = contributionAmt/54 + penaltyAmt/55;
+    commit();
+    only(Left "PoolCreator") {
+       };
+    publish(@thisConsensusTime/38)
+      .case("PoolCreator").send({
+        isClass = False,
+        msg = [],
+        pay = [startingContribution/58, ],
+        when = true})
+      .recv({
+        didSend = didPublish/65 : Bool,
+        from = PoolCreator/59 : Address,
+        msg = [],
+        secs = thisConsensusSecs/64 : UInt,
+        time = thisConsensusTime/63 : UInt}){
+        timeOrder(>, Just thisConsensusTime/38, thisConsensusTime/63 : UInt);
+        timeOrder(>=, Just thisConsensusSecs/39, thisConsensusSecs/64 : UInt);
+        const netBalance/60 : UInt* = 0;
+        const v61 : UInt* = netBalance/60 + startingContribution/58;
+        checkPay(startingContribution/58, None);
+        const v62 : Bool* = PoolCreator/36 == PoolCreator/59;
+        claim(CT_Require)(v62, Just "sender correct");
+        emitLog(event(Just "Update", info))(this/59, startingContribution/58 );
+        only(Left "PoolCreator") {
+          const v68 : Address* = selfAddress("PoolCreator", False, 67 )();
+          protect<Null>("PoolCreator".interact.readyForContribution());
+           };
+        commit();
+        only(Left "PoolCreator") {
+           };
+        publish(@thisConsensusTime/63)
+          .case("PoolCreator").send({
+            isClass = False,
+            msg = [],
+            pay = [0, ],
+            when = true})
+          .recv({
+            didSend = didPublish/74 : Bool,
+            from = PoolCreator/70 : Address,
+            msg = [],
+            secs = thisConsensusSecs/73 : UInt,
+            time = thisConsensusTime/72 : UInt}){
+            timeOrder(>, Just thisConsensusTime/63, thisConsensusTime/72 : UInt);
+            timeOrder(>=, Just thisConsensusSecs/64, thisConsensusSecs/73 : UInt);
+            checkPay(0, None);
+            const v71 : Bool* = PoolCreator/36 == PoolCreator/70;
+            claim(CT_Require)(v71, Just "sender correct");
+            const v75 : Data({"Contribution": Null, "Finished": Null, "Payment": Null, "Registration": Null})* = <Registration null>;
+            emitLog(event(Just "PoolPhase", phase))(v75 );
+            loopvar {
+              numOfUsers/79 : UInt = 0,
+              thisConsensusTime/293 : UInt = thisConsensusTime/72,
+              lastConsensusTime/294 : UInt = thisConsensusTime/63,
+              baseWaitTime/295 : UInt = thisConsensusTime/63,
+              thisConsensusSecs/296 : UInt = thisConsensusSecs/73,
+              lastConsensusSecs/297 : UInt = thisConsensusSecs/64,
+              baseWaitSecs/298 : UInt = thisConsensusSecs/64,
+              tokenInfos/299 : Array(Tuple(UInt, UInt, Bool), 0) = tokInfos/290,
+              netBalance/301 : UInt = v61};
+            invariant{
+              [invariant(const v81 : Bool* = numOfUsers/79 >= 0;
+              
+              return v81;, Nothing)] }
+            while{
+              const v83 : Bool* = numOfUsers/79 <= maxUsers/57;
+              
+              return v83; }
+            {
+              commit();
+              only(Left "Contributor_register") {
+                const v/103 : Address* = selfAddress("Contributor_register", True, 102 )();
+                let v104 : Null;
+                const .api78.dom/106 : Tuple()* = protect<Tuple()>("Contributor_register".interact.in());
+                let v107 : Null;
+                const v/109 : Data({"None": Null, "Some": Null})* = map0[v/103];
+                let x/111 : Bool;
+                local switch (v/109 : Data({"None": Null, "Some": Null})) {
+                  case None as v/112 : Null/True: {
+                    x/111 : Bool = false;
+                     }
+                  case Some as v/114 : Null/True: {
+                    x/111 : Bool = true;
+                     } }
+                const v117 : Bool* = (x/111 ? false : true);
+                claim(CT_Assume False)(v117, Nothing);
+                v107 : Null = null;
+                const v118 : Object({"msg": Tuple()})* = {
+                  msg = .api78.dom/106};
+                v104 : Null = null;
+                 };
+              only(Left "Contributor_register") {
+                 };
+              publish(@thisConsensusTime/293)
+                .case("Contributor_register").send({
+                  isClass = True,
+                  msg = [.fork84.msg/106],
+                  pay = [penaltyAmt/55, ],
+                  when = true})
+                .recv({
+                  didSend = didPublish/131 : Bool,
+                  from = this/121 : Address,
+                  msg = [.fork84.msg/122 : Tuple()],
+                  secs = thisConsensusSecs/130 : UInt,
+                  time = thisConsensusTime/129 : UInt}){
+                  timeOrder(>, Just thisConsensusTime/293, thisConsensusTime/129 : UInt);
+                  timeOrder(>=, Just thisConsensusSecs/296, thisConsensusSecs/130 : UInt);
+                  let v124 : Null;
+                  v124 : Null = null;
+                  const netBalance/127 : UInt* = netBalance/301;
+                  const v128 : UInt* = netBalance/127 + penaltyAmt/55;
+                  checkPay(penaltyAmt/55, None);
+                  setApiDetails("Contributor_register", [Tuple()], None, AIC_SpreadArg );
+                  map0[v/121] = null;
+                  const v133 : Null* = null;
+                  emitLog(event(Just "Update", info))(this/121, penaltyAmt/55 );
+                  const v135 : Null* = null;
+                  const .api78.rngl/136 : Null* = emitLog(api("Contributor_register"))(v135 );
+                  only(Left "Contributor_register") {
+                    const v138 : Address* = selfAddress("Contributor_register", True, 137 )();
+                    let v139 : Null;
+                    const didPublish/140 : Bool* = didPublish/131;
+                    local if didPublish/140 then {
+                      protect<Null>("Contributor_register".interact.out(.api78.dom/122, .api78.rngl/136 ));
+                       }
+                    else {
+                       };
+                    v139 : Null = null;
+                     };
+                  const v134 : Null* = null;
+                  const numOfUsers/141 : UInt* = numOfUsers/79 + 1;
+                  const v142 : Tuple(UInt)* = [numOfUsers/141 ];
+                  {
+                    numOfUsers/79 : UInt = numOfUsers/141,
+                    thisConsensusTime/293 : UInt = thisConsensusTime/129,
+                    lastConsensusTime/294 : UInt = thisConsensusTime/293,
+                    baseWaitTime/295 : UInt = thisConsensusTime/293,
+                    thisConsensusSecs/296 : UInt = thisConsensusSecs/130,
+                    lastConsensusSecs/297 : UInt = thisConsensusSecs/296,
+                    baseWaitSecs/298 : UInt = thisConsensusSecs/296,
+                    tokenInfos/299 : Array(Tuple(UInt, UInt, Bool), 0) = tokenInfos/299,
+                    netBalance/301 : UInt = v128}
+                  continue; }
+                 }
+            loopvar {
+              numUsers/145 : UInt = 0,
+              usersPaid/146 : UInt = 0,
+              thisConsensusTime/302 : UInt = thisConsensusTime/293,
+              lastConsensusTime/303 : UInt = lastConsensusTime/294,
+              baseWaitTime/304 : UInt = baseWaitTime/295,
+              thisConsensusSecs/305 : UInt = thisConsensusSecs/296,
+              lastConsensusSecs/306 : UInt = lastConsensusSecs/297,
+              baseWaitSecs/307 : UInt = baseWaitSecs/298,
+              tokenInfos/308 : Array(Tuple(UInt, UInt, Bool), 0) = tokenInfos/299,
+              netBalance/310 : UInt = netBalance/301};
+            invariant{
+              [invariant(const v148 : Bool* = usersPaid/146 <= numUsers/145;
+              
+              return v148;, Nothing)] }
+            while{
+              
+              return true; }
+            {
+              commit();
+              only(Left "PoolCreator") {
+                 };
+              publish(@thisConsensusTime/302)
+                .case("PoolCreator").send({
+                  isClass = False,
+                  msg = [],
+                  pay = [0, ],
+                  when = true})
+                .recv({
+                  didSend = didPublish/154 : Bool,
+                  from = PoolCreator/150 : Address,
+                  msg = [],
+                  secs = thisConsensusSecs/153 : UInt,
+                  time = thisConsensusTime/152 : UInt}){
+                  timeOrder(>, Just thisConsensusTime/302, thisConsensusTime/152 : UInt);
+                  timeOrder(>=, Just thisConsensusSecs/305, thisConsensusSecs/153 : UInt);
+                  checkPay(0, None);
+                  const v151 : Bool* = PoolCreator/36 == PoolCreator/150;
+                  claim(CT_Require)(v151, Just "sender correct");
+                  const v155 : Data({"Contribution": Null, "Finished": Null, "Payment": Null, "Registration": Null})* = <Contribution null>;
+                  emitLog(event(Just "PoolPhase", phase))(v155 );
+                  loopvar {
+                    InumUsers/158 : UInt = InumUsers/57,
+                    IusersPaid/159 : UInt = IusersPaid/146,
+                    timedOut/160 : Bool = true,
+                    thisConsensusTime/311 : UInt = thisConsensusTime/152,
+                    lastConsensusTime/312 : UInt = thisConsensusTime/302,
+                    baseWaitTime/313 : UInt = thisConsensusTime/302,
+                    thisConsensusSecs/314 : UInt = thisConsensusSecs/153,
+                    lastConsensusSecs/315 : UInt = thisConsensusSecs/305,
+                    baseWaitSecs/316 : UInt = thisConsensusSecs/305,
+                    tokenInfos/317 : Array(Tuple(UInt, UInt, Bool), 0) = tokenInfos/308,
+                    netBalance/319 : UInt = netBalance/310};
+                  invariant{
+                    [invariant(const v162 : Bool* = usersPaid/146 <= numUsers/145;
+                    
+                    return v162;, Nothing)] }
+                  while{
+                    
+                    return timedOut/160; }
+                  {
+                    const baseWaitTime/206 : UInt* = thisConsensusTime/311;
+                    const baseWaitTime/209 : UInt* = thisConsensusTime/311;
+                    const v210 : UInt* = UInt.max - base/209;
+                    const v211 : UInt* = v210 - value/56;
+                    const v212 : Bool* = v211 >= 0;
+                    claim(CT_Require)(v212, Nothing);
+                    const v213 : UInt* = base/206 + value/56;
+                    const v214 : Data({"Left": UInt, "Right": UInt})* = <Left v213>;
+                    commit();
+                    only(Left "Any_contribute") {
+                      const v174 : Address* = selfAddress("Any_contribute", True, 173 )();
+                      let v175 : Null;
+                      const .api157.dom/177 : Tuple()* = protect<Tuple()>("Any_contribute".interact.in());
+                      let v178 : Null;
+                      v178 : Null = null;
+                      const v180 : Object({"msg": Tuple()})* = {
+                        msg = .api157.dom/177};
+                      v175 : Null = null;
+                       };
+                    only(Left "Any_contribute") {
+                       };
+                    publish(@thisConsensusTime/311)
+                      .timeout(Left v213, {
+                        only(Left "PoolCreator") {
+                           };
+                        publish(@thisConsensusTime/311)
+                          .case("PoolCreator").send({
+                            isClass = False,
+                            msg = [],
+                            pay = [0, ],
+                            when = true})
+                          .recv({
+                            didSend = didPublish/220 : Bool,
+                            from = PoolCreator/216 : Address,
+                            msg = [],
+                            secs = thisConsensusSecs/219 : UInt,
+                            time = thisConsensusTime/218 : UInt}){
+                            timeOrder(>, Just thisConsensusTime/311, thisConsensusTime/218 : UInt);
+                            timeOrder(>=, Just thisConsensusSecs/314, thisConsensusSecs/219 : UInt);
+                            checkPay(0, None);
+                            const v217 : Bool* = PoolCreator/36 == PoolCreator/216;
+                            claim(CT_Require)(v217, Just "sender correct");
+                            const v221 : Tuple(Bool, UInt, UInt)* = [false, IusersPaid/159, InumUsers/158 ];
+                            const v215 : Tuple(Bool, UInt, UInt)* = v221;
+                            {
+                              InumUsers/158 : UInt = InumUsers/158,
+                              IusersPaid/159 : UInt = IusersPaid/159,
+                              timedOut/160 : Bool = false,
+                              thisConsensusTime/311 : UInt = thisConsensusTime/218,
+                              lastConsensusTime/312 : UInt = thisConsensusTime/311,
+                              baseWaitTime/313 : UInt = v213,
+                              thisConsensusSecs/314 : UInt = thisConsensusSecs/219,
+                              lastConsensusSecs/315 : UInt = thisConsensusSecs/314,
+                              baseWaitSecs/316 : UInt = thisConsensusSecs/314,
+                              tokenInfos/317 : Array(Tuple(UInt, UInt, Bool), 0) = tokenInfos/317,
+                              netBalance/319 : UInt = netBalance/319}
+                            continue; }
+                           } )
+                      .case("Any_contribute").send({
+                        isClass = True,
+                        msg = [.fork164.msg/177],
+                        pay = [contributionAmt/54, ],
+                        when = true})
+                      .recv({
+                        didSend = didPublish/193 : Bool,
+                        from = this/183 : Address,
+                        msg = [.fork164.msg/184 : Tuple()],
+                        secs = thisConsensusSecs/192 : UInt,
+                        time = thisConsensusTime/191 : UInt}){
+                        timeOrder(>, Just thisConsensusTime/311, thisConsensusTime/191 : UInt);
+                        timeOrder(>=, Just thisConsensusSecs/314, thisConsensusSecs/192 : UInt);
+                        let v186 : Null;
+                        v186 : Null = null;
+                        const netBalance/189 : UInt* = netBalance/319;
+                        const v190 : UInt* = netBalance/189 + contributionAmt/54;
+                        checkPay(contributionAmt/54, None);
+                        setApiDetails("Any_contribute", [Tuple()], None, AIC_SpreadArg );
+                        map2[v/183] = null;
+                        const v195 : Null* = null;
+                        emitLog(event(Just "Update", info))(this/183, contributionAmt/54 );
+                        const v197 : Null* = null;
+                        const .api157.rngl/198 : Null* = emitLog(api("Any_contribute"))(v197 );
+                        only(Left "Any_contribute") {
+                          const v200 : Address* = selfAddress("Any_contribute", True, 199 )();
+                          let v201 : Null;
+                          const didPublish/202 : Bool* = didPublish/193;
+                          local if didPublish/202 then {
+                            protect<Null>("Any_contribute".interact.out(.api157.dom/184, .api157.rngl/198 ));
+                             }
+                          else {
+                             };
+                          v201 : Null = null;
+                           };
+                        const v196 : Null* = null;
+                        const v203 : Tuple(Bool, UInt, UInt)* = [true, IusersPaid/159, InumUsers/158 ];
+                        {
+                          InumUsers/158 : UInt = InumUsers/158,
+                          IusersPaid/159 : UInt = IusersPaid/159,
+                          timedOut/160 : Bool = true,
+                          thisConsensusTime/311 : UInt = thisConsensusTime/191,
+                          lastConsensusTime/312 : UInt = thisConsensusTime/311,
+                          baseWaitTime/313 : UInt = v213,
+                          thisConsensusSecs/314 : UInt = thisConsensusSecs/192,
+                          lastConsensusSecs/315 : UInt = thisConsensusSecs/314,
+                          baseWaitSecs/316 : UInt = thisConsensusSecs/314,
+                          tokenInfos/317 : Array(Tuple(UInt, UInt, Bool), 0) = tokenInfos/317,
+                          netBalance/319 : UInt = v190}
+                        continue; }
+                       }
+                  const lastConsensusTime/222 : UInt* = thisConsensusTime/311;
+                  const value/223 : UInt* = lastConsensusTime/222 + duration/56;
+                  const v230 : UInt* = UInt.max - value/223;
+                  const _/231 : Bool* = v230 >= 0;
+                  let v232 : Null;
+                  v232 : Null = null;
+                  const v233 : Data({"Left": UInt, "Right": UInt})* = <Left value/223>;
+                  commit();
+                  wait(Left value/223);
+                  only(Left "PoolCreator") {
+                     };
+                  publish(@thisConsensusTime/311)
+                    .case("PoolCreator").send({
+                      isClass = False,
+                      msg = [],
+                      pay = [0, ],
+                      when = true})
+                    .recv({
+                      didSend = didPublish/238 : Bool,
+                      from = PoolCreator/234 : Address,
+                      msg = [],
+                      secs = thisConsensusSecs/237 : UInt,
+                      time = thisConsensusTime/236 : UInt}){
+                      timeOrder(>, Just thisConsensusTime/311, thisConsensusTime/236 : UInt);
+                      timeOrder(>=, Just thisConsensusSecs/314, thisConsensusSecs/237 : UInt);
+                      checkPay(0, None);
+                      const v235 : Bool* = PoolCreator/36 == PoolCreator/234;
+                      claim(CT_Require)(v235, Just "sender correct");
+                      commit();
+                      only(Left "PoolCreator") {
+                         };
+                      publish(@thisConsensusTime/236)
+                        .case("PoolCreator").send({
+                          isClass = False,
+                          msg = [],
+                          pay = [0, ],
+                          when = true})
+                        .recv({
+                          didSend = didPublish/243 : Bool,
+                          from = PoolCreator/239 : Address,
+                          msg = [],
+                          secs = thisConsensusSecs/242 : UInt,
+                          time = thisConsensusTime/241 : UInt}){
+                          timeOrder(>, Just thisConsensusTime/236, thisConsensusTime/241 : UInt);
+                          timeOrder(>=, Just thisConsensusSecs/237, thisConsensusSecs/242 : UInt);
+                          checkPay(0, None);
+                          const v240 : Bool* = PoolCreator/36 == PoolCreator/239;
+                          claim(CT_Require)(v240, Just "sender correct");
+                          const v244 : Data({"Contribution": Null, "Finished": Null, "Payment": Null, "Registration": Null})* = <Payment null>;
+                          emitLog(event(Just "PoolPhase", phase))(v244 );
+                          commit();
+                          only(Left "Any_requestPayment") {
+                            const v/247 : Address* = selfAddress("Any_requestPayment", True, 246 )();
+                            let v248 : Null;
+                            const .api245.dom/249 : Tuple()* = protect<Tuple()>("Any_requestPayment".interact.in());
+                            let v250 : Null;
+                            const v/252 : Data({"None": Null, "Some": Null})* = map1[v/247];
+                            let x/254 : Bool;
+                            local switch (v/252 : Data({"None": Null, "Some": Null})) {
+                              case None as v/255 : Null/True: {
+                                x/254 : Bool = false;
+                                 }
+                              case Some as v/257 : Null/True: {
+                                x/254 : Bool = true;
+                                 } }
+                            const v260 : Bool* = (x/254 ? false : true);
+                            claim(CT_Assume False)(v260, Nothing);
+                            v250 : Null = null;
+                            v248 : Null = null;
+                             };
+                          only(Left "Any_requestPayment") {
+                             };
+                          publish(@thisConsensusTime/241)
+                            .case("Any_requestPayment").send({
+                              isClass = True,
+                              msg = [.api245.dom/249],
+                              pay = [0, ],
+                              when = true})
+                            .recv({
+                              didSend = didPublish/267 : Bool,
+                              from = v/262 : Address,
+                              msg = [.api245.dom/263 : Tuple()],
+                              secs = thisConsensusSecs/266 : UInt,
+                              time = thisConsensusTime/265 : UInt}){
+                              timeOrder(>, Just thisConsensusTime/241, thisConsensusTime/265 : UInt);
+                              timeOrder(>=, Just thisConsensusSecs/242, thisConsensusSecs/266 : UInt);
+                              checkPay(0, None);
+                              setApiDetails("Any_requestPayment", [Tuple()], None, AIC_SpreadArg );
+                              const netBalance/268 : UInt* = netBalance/319;
+                              const netBalance/269 : UInt* = netBalance/319;
+                              const v270 : Bool* = netBalance/268 <= netBalance/269;
+                              claim(CT_Assert)(v270, Just "balance sufficient for transfer");
+                              const netBalance/271 : UInt* = netBalance/319;
+                              const v272 : UInt* = netBalance/271 - netBalance/268;
+                              transfer.(netBalance/268, None).to(this/262);
+                              map1[v/262] = null;
+                              const v273 : Null* = null;
+                              const v275 : Null* = null;
+                              const .api245.rngl/276 : Null* = emitLog(api("Any_requestPayment"))(v275 );
+                              only(Left "Any_requestPayment") {
+                                const v278 : Address* = selfAddress("Any_requestPayment", True, 277 )();
+                                let v279 : Null;
+                                protect<Null>("Any_requestPayment".interact.out(.api245.dom/263, .api245.rngl/276 ));
+                                v279 : Null = null;
+                                 };
+                              const v274 : Null* = null;
+                              const usersPaid/280 : UInt* = usersPaid/146 + 1;
+                              const numUsers/281 : UInt* = numUsers/145 + 1;
+                              {
+                                numUsers/145 : UInt = numUsers/281,
+                                usersPaid/146 : UInt = usersPaid/280,
+                                thisConsensusTime/302 : UInt = thisConsensusTime/265,
+                                lastConsensusTime/303 : UInt = thisConsensusTime/241,
+                                baseWaitTime/304 : UInt = thisConsensusTime/241,
+                                thisConsensusSecs/305 : UInt = thisConsensusSecs/266,
+                                lastConsensusSecs/306 : UInt = thisConsensusSecs/242,
+                                baseWaitSecs/307 : UInt = thisConsensusSecs/242,
+                                tokenInfos/308 : Array(Tuple(UInt, UInt, Bool), 0) = tokenInfos/317,
+                                netBalance/310 : UInt = v272}
+                              continue; }
+                             }
+                         }
+                     }
+                 }
+            commit();
+            only(Left "PoolCreator") {
+               };
+            publish(@thisConsensusTime/302)
+              .case("PoolCreator").send({
+                isClass = False,
+                msg = [],
+                pay = [0, ],
+                when = true})
+              .recv({
+                didSend = didPublish/286 : Bool,
+                from = PoolCreator/282 : Address,
+                msg = [],
+                secs = thisConsensusSecs/285 : UInt,
+                time = thisConsensusTime/284 : UInt}){
+                timeOrder(>, Just thisConsensusTime/302, thisConsensusTime/284 : UInt);
+                timeOrder(>=, Just thisConsensusSecs/305, thisConsensusSecs/285 : UInt);
+                checkPay(0, None);
+                const v283 : Bool* = PoolCreator/36 == PoolCreator/282;
+                claim(CT_Require)(v283, Just "sender correct");
+                const v287 : Data({"Contribution": Null, "Finished": Null, "Payment": Null, "Registration": Null})* = <Finished null>;
+                emitLog(event(Just "PoolPhase", phase))(v287 );
+                const netBalance/288 : UInt* = netBalance/310;
+                const v289 : Bool* = 0 == netBalance/288;
+                claim(CT_Assert)(v289, Just "balance zero at application exit");
+                commit();
+                exit(); }
+               }
+           }
+       }
+  

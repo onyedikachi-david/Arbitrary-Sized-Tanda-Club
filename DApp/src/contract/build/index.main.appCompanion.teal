@@ -1,0 +1,4 @@
+#pragma version 6
+txn Sender
+global CreatorAddress
+==

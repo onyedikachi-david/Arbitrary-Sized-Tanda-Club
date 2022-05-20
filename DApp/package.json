@@ -14,8 +14,11 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "build": "npm run recompile && react-scripts build",
+    "recompile": "(cd src/contract && ./reach compile --intermediate-files)",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "test": "REACH_CONNECTOR_MODE=ALGO-browser ./reach run test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

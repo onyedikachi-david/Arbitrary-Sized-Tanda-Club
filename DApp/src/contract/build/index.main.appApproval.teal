@@ -1,0 +1,1619 @@
+#pragma version 6
+// resource: R_Txn
+int 0
+store 0 // GV_txnCounter :: UInt
+txn ApplicationID
+bz alloc
+byte base64()
+app_global_get
+dup
+int 0
+extract_uint64
+store 1 // GV_currentStep :: UInt
+int 8
+extract_uint64
+store 2 // GV_currentTime :: UInt
+txn OnCompletion
+int OptIn
+==
+bz normal
+// checked on completion
+txn Sender
+byte base64(AA==)
+int 3
+bzero
+app_local_put
+b checkSize
+normal:
+txna ApplicationArgs 0
+btoi
+preamble:
+dup
+bz publish
+api:
+int 0
+store 4 // GV_argTime :: UInt
+int 1
+store 6 // GV_wasMeth :: Bool
+dup
+int 3416017335
+<
+bnz l3_method_lt_3416017335
+dup
+int 3522870039
+<
+bnz l4_method_lt_3522870039
+int 3522870039
+==
+assert
+
+  // { l0_Any_contribute
+  l0_Any_contribute:
+  // API: Any_contribute()byte[0]
+  //  i(3522870039) h(d1fabb17) b64(0fq7Fw==)
+  byte base64()
+  b publish11
+  // l0_Any_contribute }
+
+l4_method_lt_3522870039:
+int 3416017335
+==
+assert
+
+  // { l2_Contributor_register
+  l2_Contributor_register:
+  // API: Contributor_register()byte[0]
+  //  i(3416017335) h(cb9c49b7) b64(y5xJtw==)
+  byte base64()
+  b publish13
+  // l2_Contributor_register }
+
+l3_method_lt_3416017335:
+dup
+int 1707386189
+<
+bnz l5_method_lt_1707386189
+int 1707386189
+==
+assert
+
+  // { l6_poolDetails
+  l6_poolDetails:
+  // View: poolDetails()(uint64,uint64,uint64,uint64,byte[200],byte[16])
+  //  i(1707386189) h(65c4a54d) b64(ZcSlTQ==)
+  load 1 // GV_currentStep :: UInt
+  dup
+  int 9
+  <
+  bnz l7_viewStep_lt_9
+  dup
+  int 11
+  <
+  bnz l8_viewStep_lt_11
+  dup
+  int 12
+  <
+  bnz l9_viewStep_lt_12
+  dup
+  int 13
+  <
+  bnz l10_viewStep_lt_13
+  int 13
+  ==
+  assert
+
+    // { poolDetails_13
+    byte base64(AA==)
+    app_global_get
+    byte base64(AQ==)
+    app_global_get
+    concat
+    byte base64(Ag==)
+    app_global_get
+    concat
+    dup
+    store 3 // GV_svs :: Null
+    extract 32 248
+    store 7 // GV_apiRet :: Null
+    b apiReturn_check
+    // poolDetails_13 }
+
+  l10_viewStep_lt_13:
+  pop
+
+    // { poolDetails_12
+    byte base64(AA==)
+    app_global_get
+    byte base64(AQ==)
+    app_global_get
+    concat
+    byte base64(Ag==)
+    app_global_get
+    concat
+    dup
+    store 3 // GV_svs :: Null
+    extract 32 248
+    store 7 // GV_apiRet :: Null
+    b apiReturn_check
+    // poolDetails_12 }
+
+  l9_viewStep_lt_12:
+  pop
+
+    // { poolDetails_11
+    byte base64(AA==)
+    app_global_get
+    byte base64(AQ==)
+    app_global_get
+    concat
+    byte base64(Ag==)
+    app_global_get
+    concat
+    dup
+    store 3 // GV_svs :: Null
+    extract 32 248
+    store 7 // GV_apiRet :: Null
+    b apiReturn_check
+    // poolDetails_11 }
+
+  l8_viewStep_lt_11:
+  dup
+  int 10
+  <
+  bnz l11_viewStep_lt_10
+  pop
+
+    // { poolDetails_10
+    byte base64(AA==)
+    app_global_get
+    byte base64(AQ==)
+    app_global_get
+    concat
+    byte base64(Ag==)
+    app_global_get
+    concat
+    dup
+    store 3 // GV_svs :: Null
+    extract 32 248
+    store 7 // GV_apiRet :: Null
+    b apiReturn_check
+    // poolDetails_10 }
+
+  l11_viewStep_lt_10:
+  pop
+
+    // { poolDetails_9
+    byte base64(AA==)
+    app_global_get
+    byte base64(AQ==)
+    app_global_get
+    concat
+    byte base64(Ag==)
+    app_global_get
+    concat
+    dup
+    store 3 // GV_svs :: Null
+    extract 32 248
+    store 7 // GV_apiRet :: Null
+    b apiReturn_check
+    // poolDetails_9 }
+
+  l7_viewStep_lt_9:
+  dup
+  int 5
+  <
+  bnz l12_viewStep_lt_5
+  dup
+  int 7
+  <
+  bnz l13_viewStep_lt_7
+  int 7
+  ==
+  assert
+
+    // { poolDetails_7
+    byte base64(AA==)
+    app_global_get
+    byte base64(AQ==)
+    app_global_get
+    concat
+    byte base64(Ag==)
+    app_global_get
+    concat
+    dup
+    store 3 // GV_svs :: Null
+    extract 32 248
+    store 7 // GV_apiRet :: Null
+    b apiReturn_check
+    // poolDetails_7 }
+
+  l13_viewStep_lt_7:
+  int 5
+  ==
+  assert
+
+    // { poolDetails_5
+    byte base64(AA==)
+    app_global_get
+    byte base64(AQ==)
+    app_global_get
+    concat
+    byte base64(Ag==)
+    app_global_get
+    concat
+    dup
+    store 3 // GV_svs :: Null
+    extract 32 248
+    store 7 // GV_apiRet :: Null
+    b apiReturn_check
+    // poolDetails_5 }
+
+  l12_viewStep_lt_5:
+  dup
+  int 2
+  <
+  bnz l14_viewStep_lt_2
+  int 2
+  ==
+  assert
+
+    // { poolDetails_2
+    byte base64(AA==)
+    app_global_get
+    byte base64(AQ==)
+    app_global_get
+    concat
+    byte base64(Ag==)
+    app_global_get
+    concat
+    dup
+    store 3 // GV_svs :: Null
+    extract 32 248
+    store 7 // GV_apiRet :: Null
+    b apiReturn_check
+    // poolDetails_2 }
+
+  l14_viewStep_lt_2:
+  int 1
+  ==
+  assert
+
+    // { poolDetails_1
+    byte base64(AA==)
+    app_global_get
+    byte base64(AQ==)
+    app_global_get
+    concat
+    byte base64(Ag==)
+    app_global_get
+    concat
+    dup
+    store 3 // GV_svs :: Null
+    extract 32 248
+    store 7 // GV_apiRet :: Null
+    b apiReturn_check
+    // poolDetails_1 }
+
+  // l6_poolDetails }
+
+l5_method_lt_1707386189:
+int 1066444164
+==
+assert
+
+  // { l1_Any_requestPayment
+  l1_Any_requestPayment:
+  // API: Any_requestPayment()byte[0]
+  //  i(1066444164) h(3f90a584) b64(P5ClhA==)
+  byte base64()
+  b publish10
+  // l1_Any_requestPayment }
+
+publish:
+txna ApplicationArgs 2
+btoi
+store 4 // GV_argTime :: UInt
+txna ApplicationArgs 3
+txna ApplicationArgs 1
+btoi
+dup
+int 8
+<
+bnz l15_publish_lt_8
+dup
+int 11
+<
+bnz l16_publish_lt_11
+dup
+int 12
+<
+bnz l17_publish_lt_12
+dup
+int 13
+<
+bnz l18_publish_lt_13
+int 13
+==
+assert
+
+  // { publish13
+  publish13:
+  // CompanionLabel False "publish13"
+  // check step
+  int 13
+  load 1 // GV_currentStep :: UInt
+  ==
+  assert
+  // check time
+  load 4 // GV_argTime :: UInt
+  dup
+  int 0
+  ==
+  swap
+  load 2 // GV_currentTime :: UInt
+  ==
+  ||
+  assert
+  byte base64(AA==)
+  app_global_get
+  byte base64(AQ==)
+  app_global_get
+  concat
+  byte base64(Ag==)
+  app_global_get
+  concat
+  dup
+  store 3 // GV_svs :: Null
+  int 304
+  extract_uint64
+  store 255 // v348 :: UInt
+  dup
+  store 5 // GV_argMsg :: Null
+  store 254 // .fork84.msg/397 :: Tuple()
+  byte base64(7X69+w==)
+  load 254 // .fork84.msg/397 :: Tuple()
+  concat
+  log // up to 4 bytes
+  // CompanionLabel True "api_Contributor_register"
+  api_Contributor_register:
+
+    // { checkTxn
+    load 255 // v348 :: UInt
+    callsub l19_LF_checkTxn_net
+    // checkTxn }
+
+  // ^ CheckPay
+  // at ./index.rsh:96:23:dot
+  txn Sender
+  byte base64(AA==)
+  txn Sender
+  callsub l20_LF_cMapLoad
+  int 1
+  int 0
+  swap
+  setbyte
+  app_local_put
+  byte base64(SP/Aew==)
+  txn Sender
+  concat
+  load 255 // v348 :: UInt
+  itob
+  concat
+  log // up to 44 bytes
+  byte base64(AAAAAAAAAZQ=)
+  log // up to 8 bytes
+  byte base64()
+  store 7 // GV_apiRet :: Null
+  load 3 // GV_svs :: Null
+  extract 0 32
+  load 3 // GV_svs :: Null
+  extract 32 248
+  load 3 // GV_svs :: Null
+  int 280
+  extract_uint64
+  load 3 // GV_svs :: Null
+  int 288
+  extract_uint64
+  load 3 // GV_svs :: Null
+  int 296
+  extract_uint64
+  load 255 // v348 :: UInt
+  load 3 // GV_svs :: Null
+  int 312
+  extract_uint64
+  int 1
+  +
+  global Round
+  load 3 // GV_svs :: Null
+  int 320
+  extract_uint64
+  load 255 // v348 :: UInt
+  +
+  b loopBody3
+  // publish13 }
+
+l18_publish_lt_13:
+pop
+
+  // { publish12
+  publish12:
+  // CompanionLabel False "publish12"
+  // check step
+  int 12
+  load 1 // GV_currentStep :: UInt
+  ==
+  assert
+  // check time
+  load 4 // GV_argTime :: UInt
+  dup
+  int 0
+  ==
+  swap
+  load 2 // GV_currentTime :: UInt
+  ==
+  ||
+  assert
+  byte base64(AA==)
+  app_global_get
+  byte base64(AQ==)
+  app_global_get
+  concat
+  byte base64(Ag==)
+  app_global_get
+  concat
+  dup
+  store 3 // GV_svs :: Null
+  extract 0 32
+  store 255 // PoolCreator/341 :: Address
+  byte base64(yqvONw==)
+  log // up to 4 bytes
+  global Round
+  load 3 // GV_svs :: Null
+  int 304
+  extract_uint64
+  >=
+  assert
+  // ^ CheckPay
+  // at ./index.rsh:156:16:dot
+  // at ./index.rsh:154:33:application call to [unknown function] (defined at: ./index.rsh:154:33:function exp)
+  load 255 // PoolCreator/341 :: Address
+  txn Sender
+  ==
+  assert
+  // ^ Claim: sender correct
+  // at ./index.rsh:156:16:dot
+  // at ./index.rsh:154:33:application call to [unknown function] (defined at: ./index.rsh:154:33:function exp)
+  load 255 // PoolCreator/341 :: Address
+  load 3 // GV_svs :: Null
+  extract 32 248
+  load 3 // GV_svs :: Null
+  int 280
+  extract_uint64
+  load 3 // GV_svs :: Null
+  int 288
+  extract_uint64
+  int 0
+  global Round
+  load 3 // GV_svs :: Null
+  int 296
+  extract_uint64
+  b loopBody7
+  // publish12 }
+
+l17_publish_lt_12:
+pop
+
+  // { publish11
+  publish11:
+  // CompanionLabel False "publish11"
+  // check step
+  int 12
+  load 1 // GV_currentStep :: UInt
+  ==
+  assert
+  // check time
+  load 4 // GV_argTime :: UInt
+  dup
+  int 0
+  ==
+  swap
+  load 2 // GV_currentTime :: UInt
+  ==
+  ||
+  assert
+  byte base64(AA==)
+  app_global_get
+  byte base64(AQ==)
+  app_global_get
+  concat
+  byte base64(Ag==)
+  app_global_get
+  concat
+  dup
+  store 3 // GV_svs :: Null
+  int 280
+  extract_uint64
+  store 255 // v345 :: UInt
+  dup
+  store 5 // GV_argMsg :: Null
+  store 254 // .fork164.msg/453 :: Tuple()
+  byte base64(n9ybtQ==)
+  load 254 // .fork164.msg/453 :: Tuple()
+  concat
+  log // up to 4 bytes
+  global Round
+  load 3 // GV_svs :: Null
+  int 304
+  extract_uint64
+  <
+  assert
+  // CompanionLabel True "api_Any_contribute"
+  api_Any_contribute:
+
+    // { checkTxn
+    load 255 // v345 :: UInt
+    callsub l19_LF_checkTxn_net
+    // checkTxn }
+
+  // ^ CheckPay
+  // at ./index.rsh:140:23:dot
+  txn Sender
+  byte base64(AA==)
+  txn Sender
+  callsub l20_LF_cMapLoad
+  int 1
+  int 2
+  swap
+  setbyte
+  app_local_put
+  byte base64(SP/Aew==)
+  txn Sender
+  concat
+  load 255 // v345 :: UInt
+  itob
+  concat
+  log // up to 44 bytes
+  byte base64(AAAAAAAAAcw=)
+  log // up to 8 bytes
+  byte base64()
+  store 7 // GV_apiRet :: Null
+  load 3 // GV_svs :: Null
+  extract 0 32
+  load 3 // GV_svs :: Null
+  extract 32 248
+  load 255 // v345 :: UInt
+  load 3 // GV_svs :: Null
+  int 288
+  extract_uint64
+  int 1
+  global Round
+  load 3 // GV_svs :: Null
+  int 296
+  extract_uint64
+  load 255 // v345 :: UInt
+  +
+  b loopBody7
+  // publish11 }
+
+l16_publish_lt_11:
+dup
+int 9
+<
+bnz l21_publish_lt_9
+dup
+int 10
+<
+bnz l22_publish_lt_10
+pop
+
+  // { publish10
+  publish10:
+  // CompanionLabel False "publish10"
+  // check step
+  int 11
+  load 1 // GV_currentStep :: UInt
+  ==
+  assert
+  // check time
+  load 4 // GV_argTime :: UInt
+  dup
+  int 0
+  ==
+  swap
+  load 2 // GV_currentTime :: UInt
+  ==
+  ||
+  assert
+  byte base64(AA==)
+  app_global_get
+  byte base64(AQ==)
+  app_global_get
+  concat
+  byte base64(Ag==)
+  app_global_get
+  concat
+  dup
+  store 3 // GV_svs :: Null
+  int 296
+  extract_uint64
+  store 255 // netBalance/438 :: UInt
+  dup
+  store 5 // GV_argMsg :: Null
+  store 254 // .api245.dom/498 :: Tuple()
+  byte base64(33TyOg==)
+  load 254 // .api245.dom/498 :: Tuple()
+  concat
+  log // up to 4 bytes
+  // CompanionLabel True "api_Any_requestPayment"
+  api_Any_requestPayment:
+  // ^ CheckPay
+  // at ./index.rsh:182:9:dot
+
+    // { makeTxn
+    itxn_begin
+    int 0
+    itxn_field Fee
+    load 255 // netBalance/438 :: UInt
+    itxn_field Amount
+    int pay
+    itxn_field TypeEnum
+    txn Sender
+    itxn_field Receiver
+    itxn_submit
+    // makeTxn }
+
+  txn Sender
+  byte base64(AA==)
+  txn Sender
+  callsub l20_LF_cMapLoad
+  int 1
+  int 1
+  swap
+  setbyte
+  app_local_put
+  byte base64(AAAAAAAAAfs=)
+  log // up to 8 bytes
+  byte base64()
+  store 7 // GV_apiRet :: Null
+  load 3 // GV_svs :: Null
+  extract 0 32
+  load 3 // GV_svs :: Null
+  extract 32 248
+  load 3 // GV_svs :: Null
+  int 280
+  extract_uint64
+  load 3 // GV_svs :: Null
+  int 288
+  extract_uint64
+  global Round
+  load 255 // netBalance/438 :: UInt
+  dup
+  -
+  b loopBody4
+  // publish10 }
+
+l22_publish_lt_10:
+pop
+
+  // { publish9
+  publish9:
+  // CompanionLabel False "publish9"
+  // check step
+  int 10
+  load 1 // GV_currentStep :: UInt
+  ==
+  assert
+  // check time
+  load 4 // GV_argTime :: UInt
+  dup
+  int 0
+  ==
+  swap
+  load 2 // GV_currentTime :: UInt
+  ==
+  ||
+  assert
+  byte base64(AA==)
+  app_global_get
+  byte base64(AQ==)
+  app_global_get
+  concat
+  byte base64(Ag==)
+  app_global_get
+  concat
+  dup
+  store 3 // GV_svs :: Null
+  dup
+  dup2
+  dup
+  extract 0 32
+  store 255 // PoolCreator/341 :: Address
+  extract 32 248
+  store 254 // poolDetails/342 :: Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)})
+  int 280
+  extract_uint64
+  store 253 // v345 :: UInt
+  int 288
+  extract_uint64
+  store 252 // v346 :: UInt
+  int 296
+  extract_uint64
+  store 251 // netBalance/438 :: UInt
+  byte base64(ogVmjg==)
+  log // up to 4 bytes
+  // ^ CheckPay
+  // at ./index.rsh:172:12:dot
+  load 255 // PoolCreator/341 :: Address
+  txn Sender
+  ==
+  assert
+  // ^ Claim: sender correct
+  // at ./index.rsh:172:12:dot
+  byte base64(zwGMrAI=)
+  log // up to 5 bytes
+  load 255 // PoolCreator/341 :: Address
+  load 254 // poolDetails/342 :: Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)})
+  concat
+  load 253 // v345 :: UInt
+  itob
+  concat
+  load 252 // v346 :: UInt
+  itob
+  concat
+  load 251 // netBalance/438 :: UInt
+  itob
+  concat
+  byte base64(AA==)
+  dig 1
+  extract 0 127
+  app_global_put
+  byte base64(AQ==)
+  dig 1
+  extract 127 127
+  app_global_put
+  byte base64(Ag==)
+  dig 1
+  extract 254 50
+  app_global_put
+  pop
+  int 11
+  store 1 // GV_currentStep :: UInt
+  global Round
+  store 2 // GV_currentTime :: UInt
+  b updateStateNoOp
+  // publish9 }
+
+l21_publish_lt_9:
+pop
+
+  // { publish8
+  publish8:
+  // CompanionLabel False "publish8"
+  // check step
+  int 9
+  load 1 // GV_currentStep :: UInt
+  ==
+  assert
+  // check time
+  load 4 // GV_argTime :: UInt
+  dup
+  int 0
+  ==
+  swap
+  load 2 // GV_currentTime :: UInt
+  ==
+  ||
+  assert
+  byte base64(AA==)
+  app_global_get
+  byte base64(AQ==)
+  app_global_get
+  concat
+  byte base64(Ag==)
+  app_global_get
+  concat
+  dup
+  store 3 // GV_svs :: Null
+  dup
+  dup2
+  dup2
+  extract 0 32
+  store 255 // PoolCreator/341 :: Address
+  extract 32 248
+  store 254 // poolDetails/342 :: Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)})
+  int 280
+  extract_uint64
+  store 253 // v345 :: UInt
+  int 288
+  extract_uint64
+  store 252 // v346 :: UInt
+  int 296
+  extract_uint64
+  store 251 // netBalance/438 :: UInt
+  int 304
+  extract_uint64
+  store 250 // value/474 :: UInt
+  byte base64(F/zbLg==)
+  log // up to 4 bytes
+  global Round
+  load 250 // value/474 :: UInt
+  >=
+  assert
+  // ^ CheckPay
+  // at ./index.rsh:166:12:dot
+  load 255 // PoolCreator/341 :: Address
+  txn Sender
+  ==
+  assert
+  // ^ Claim: sender correct
+  // at ./index.rsh:166:12:dot
+  load 255 // PoolCreator/341 :: Address
+  load 254 // poolDetails/342 :: Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)})
+  concat
+  load 253 // v345 :: UInt
+  itob
+  concat
+  load 252 // v346 :: UInt
+  itob
+  concat
+  load 251 // netBalance/438 :: UInt
+  itob
+  concat
+  byte base64(AA==)
+  dig 1
+  extract 0 127
+  app_global_put
+  byte base64(AQ==)
+  dig 1
+  extract 127 127
+  app_global_put
+  byte base64(Ag==)
+  dig 1
+  extract 254 50
+  app_global_put
+  pop
+  int 10
+  store 1 // GV_currentStep :: UInt
+  global Round
+  store 2 // GV_currentTime :: UInt
+  b updateStateNoOp
+  // publish8 }
+
+l15_publish_lt_8:
+dup
+int 2
+<
+bnz l23_publish_lt_2
+dup
+int 5
+<
+bnz l24_publish_lt_5
+dup
+int 6
+<
+bnz l25_publish_lt_6
+int 6
+==
+assert
+
+  // { publish6
+  publish6:
+  // CompanionLabel False "publish6"
+  // check step
+  int 7
+  load 1 // GV_currentStep :: UInt
+  ==
+  assert
+  // check time
+  load 4 // GV_argTime :: UInt
+  dup
+  int 0
+  ==
+  swap
+  load 2 // GV_currentTime :: UInt
+  ==
+  ||
+  assert
+  byte base64(AA==)
+  app_global_get
+  byte base64(AQ==)
+  app_global_get
+  concat
+  byte base64(Ag==)
+  app_global_get
+  concat
+  dup
+  store 3 // GV_svs :: Null
+  extract 0 32
+  store 255 // PoolCreator/341 :: Address
+  byte base64(YbSsDA==)
+  log // up to 4 bytes
+  // ^ CheckPay
+  // at ./index.rsh:132:12:dot
+  load 255 // PoolCreator/341 :: Address
+  txn Sender
+  ==
+  assert
+  // ^ Claim: sender correct
+  // at ./index.rsh:132:12:dot
+  byte base64(zwGMrAA=)
+  log // up to 5 bytes
+  load 255 // PoolCreator/341 :: Address
+  load 3 // GV_svs :: Null
+  extract 32 248
+  load 3 // GV_svs :: Null
+  int 280
+  extract_uint64
+  load 3 // GV_svs :: Null
+  int 288
+  extract_uint64
+  int 1
+  global Round
+  load 3 // GV_svs :: Null
+  int 296
+  extract_uint64
+  b loopBody7
+  // publish6 }
+
+l25_publish_lt_6:
+pop
+
+  // { publish5
+  publish5:
+  // CompanionLabel False "publish5"
+  // check step
+  int 5
+  load 1 // GV_currentStep :: UInt
+  ==
+  assert
+  // check time
+  load 4 // GV_argTime :: UInt
+  dup
+  int 0
+  ==
+  swap
+  load 2 // GV_currentTime :: UInt
+  ==
+  ||
+  assert
+  byte base64(AA==)
+  app_global_get
+  byte base64(AQ==)
+  app_global_get
+  concat
+  byte base64(Ag==)
+  app_global_get
+  concat
+  store 3 // GV_svs :: Null
+  byte base64(zJmSXA==)
+  log // up to 4 bytes
+  // ^ CheckPay
+  // at ./index.rsh:198:8:dot
+  load 3 // GV_svs :: Null
+  extract 0 32
+  txn Sender
+  ==
+  assert
+  // ^ Claim: sender correct
+  // at ./index.rsh:198:8:dot
+  byte base64(zwGMrAE=)
+  log // up to 5 bytes
+  // CompanionDeletePre
+  b updateStateHalt
+  // publish5 }
+
+l24_publish_lt_5:
+int 2
+==
+assert
+
+  // { publish2
+  publish2:
+  // CompanionLabel False "publish2"
+  // check step
+  int 2
+  load 1 // GV_currentStep :: UInt
+  ==
+  assert
+  // check time
+  load 4 // GV_argTime :: UInt
+  dup
+  int 0
+  ==
+  swap
+  load 2 // GV_currentTime :: UInt
+  ==
+  ||
+  assert
+  byte base64(AA==)
+  app_global_get
+  byte base64(AQ==)
+  app_global_get
+  concat
+  byte base64(Ag==)
+  app_global_get
+  concat
+  dup
+  store 3 // GV_svs :: Null
+  extract 0 32
+  store 255 // PoolCreator/341 :: Address
+  byte base64(QbFATQ==)
+  log // up to 4 bytes
+  // ^ CheckPay
+  // at ./index.rsh:85:8:dot
+  load 255 // PoolCreator/341 :: Address
+  txn Sender
+  ==
+  assert
+  // ^ Claim: sender correct
+  // at ./index.rsh:85:8:dot
+  byte base64(zwGMrAM=)
+  log // up to 5 bytes
+  load 255 // PoolCreator/341 :: Address
+  load 3 // GV_svs :: Null
+  extract 32 248
+  load 3 // GV_svs :: Null
+  int 280
+  extract_uint64
+  load 3 // GV_svs :: Null
+  int 288
+  extract_uint64
+  load 3 // GV_svs :: Null
+  int 296
+  extract_uint64
+  load 3 // GV_svs :: Null
+  int 304
+  extract_uint64
+  int 0
+  global Round
+  load 3 // GV_svs :: Null
+  int 312
+  extract_uint64
+  b loopBody3
+  // publish2 }
+
+l23_publish_lt_2:
+dup
+int 1
+<
+bnz l26_publish_lt_1
+pop
+
+  // { publish1
+  publish1:
+  // CompanionLabel False "publish1"
+  // check step
+  int 1
+  load 1 // GV_currentStep :: UInt
+  ==
+  assert
+  // check time
+  load 4 // GV_argTime :: UInt
+  dup
+  int 0
+  ==
+  swap
+  load 2 // GV_currentTime :: UInt
+  ==
+  ||
+  assert
+  byte base64(AA==)
+  app_global_get
+  byte base64(AQ==)
+  app_global_get
+  concat
+  byte base64(Ag==)
+  app_global_get
+  concat
+  dup
+  store 3 // GV_svs :: Null
+  dup
+  dup2
+  dup2
+  dup
+  extract 0 32
+  store 255 // PoolCreator/341 :: Address
+  extract 32 248
+  store 254 // poolDetails/342 :: Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)})
+  int 280
+  extract_uint64
+  store 253 // v345 :: UInt
+  int 288
+  extract_uint64
+  store 252 // v346 :: UInt
+  int 296
+  extract_uint64
+  store 251 // v347 :: UInt
+  int 304
+  extract_uint64
+  store 250 // v348 :: UInt
+  int 312
+  extract_uint64
+  store 249 // startingContribution/362 :: UInt
+  byte base64(mouRdA==)
+  log // up to 4 bytes
+
+    // { checkTxn
+    load 249 // startingContribution/362 :: UInt
+    callsub l19_LF_checkTxn_net
+    // checkTxn }
+
+  // ^ CheckPay
+  // at ./index.rsh:81:8:dot
+  load 255 // PoolCreator/341 :: Address
+  txn Sender
+  ==
+  assert
+  // ^ Claim: sender correct
+  // at ./index.rsh:81:8:dot
+  byte base64(SP/Aew==)
+  txn Sender
+  concat
+  load 249 // startingContribution/362 :: UInt
+  itob
+  concat
+  log // up to 44 bytes
+  load 255 // PoolCreator/341 :: Address
+  load 254 // poolDetails/342 :: Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)})
+  concat
+  load 253 // v345 :: UInt
+  itob
+  concat
+  load 252 // v346 :: UInt
+  itob
+  concat
+  load 251 // v347 :: UInt
+  itob
+  concat
+  load 250 // v348 :: UInt
+  itob
+  concat
+  load 249 // startingContribution/362 :: UInt
+  itob
+  concat
+  byte base64(AA==)
+  dig 1
+  extract 0 127
+  app_global_put
+  byte base64(AQ==)
+  dig 1
+  extract 127 127
+  app_global_put
+  byte base64(Ag==)
+  dig 1
+  extract 254 66
+  app_global_put
+  pop
+  int 2
+  store 1 // GV_currentStep :: UInt
+  global Round
+  store 2 // GV_currentTime :: UInt
+  b updateStateNoOp
+  // publish1 }
+
+l26_publish_lt_1:
+pop
+
+  // { publish0
+  publish0:
+  // CompanionCreate
+
+    // { checkTxn
+    int 100000
+    callsub l19_LF_checkTxn_net
+    // checkTxn }
+
+  // ^ CheckPay
+  // at ./index.rsh:69:8:dot
+  // CompanionLabel False "publish0"
+  // check step
+  int 0
+  load 1 // GV_currentStep :: UInt
+  ==
+  assert
+  // check time
+  load 4 // GV_argTime :: UInt
+  dup
+  int 0
+  ==
+  swap
+  load 2 // GV_currentTime :: UInt
+  ==
+  ||
+  assert
+  dup
+  store 5 // GV_argMsg :: Null
+  store 255 // poolDetails/342 :: Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)})
+  byte base64(R1GVGg==)
+  load 255 // poolDetails/342 :: Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)})
+  concat
+  log // up to 252 bytes
+  // ^ CheckPay
+  // at ./index.rsh:69:8:dot
+  load 255 // poolDetails/342 :: Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)})
+  int 0
+  extract_uint64
+  store 254 // v345 :: UInt
+  load 255 // poolDetails/342 :: Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)})
+  int 8
+  extract_uint64
+  store 253 // v346 :: UInt
+  load 255 // poolDetails/342 :: Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)})
+  int 16
+  extract_uint64
+  store 252 // v347 :: UInt
+  load 255 // poolDetails/342 :: Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)})
+  int 24
+  extract_uint64
+  dup
+  store 251 // v348 :: UInt
+  load 254 // v345 :: UInt
+  int 2
+  /
+  ==
+  assert
+  // ^ Claim: Penalty amount is not half of the contribution amount.
+  // at ./index.rsh:60:14:application
+  // at ./index.rsh:71:23:application call to "checkPoolStructure" (defined at: ./index.rsh:58:38:function exp)
+  load 254 // v345 :: UInt
+  int 0
+  >
+  assert
+  // ^ Claim: Contribution amount cannot be zero.
+  // at ./index.rsh:61:14:application
+  // at ./index.rsh:71:23:application call to "checkPoolStructure" (defined at: ./index.rsh:58:38:function exp)
+  load 254 // v345 :: UInt
+  load 251 // v348 :: UInt
+  +
+  store 250 // startingContribution/362 :: UInt
+  txn Sender
+  load 255 // poolDetails/342 :: Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)})
+  concat
+  load 254 // v345 :: UInt
+  itob
+  concat
+  load 253 // v346 :: UInt
+  itob
+  concat
+  load 252 // v347 :: UInt
+  itob
+  concat
+  load 251 // v348 :: UInt
+  itob
+  concat
+  load 250 // startingContribution/362 :: UInt
+  itob
+  concat
+  byte base64(AA==)
+  dig 1
+  extract 0 127
+  app_global_put
+  byte base64(AQ==)
+  dig 1
+  extract 127 127
+  app_global_put
+  byte base64(Ag==)
+  dig 1
+  extract 254 66
+  app_global_put
+  pop
+  int 1
+  store 1 // GV_currentStep :: UInt
+  global Round
+  store 2 // GV_currentTime :: UInt
+  b updateStateNoOp
+  // publish0 }
+
+
+  // { loopBody3
+  loopBody3:
+  store 255 // netBalance/383 :: UInt
+  store 254 // thisConsensusTime/376 :: UInt
+  store 253 // numOfUsers/375 :: UInt
+  store 252 // v348 :: UInt
+  store 251 // v347 :: UInt
+  store 250 // v346 :: UInt
+  store 249 // v345 :: UInt
+  store 248 // poolDetails/342 :: Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)})
+  store 247 // PoolCreator/341 :: Address
+  load 253 // numOfUsers/375 :: UInt
+  load 251 // v347 :: UInt
+  <=
+  bz l27_ifF
+  load 247 // PoolCreator/341 :: Address
+  load 248 // poolDetails/342 :: Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)})
+  concat
+  load 249 // v345 :: UInt
+  itob
+  concat
+  load 250 // v346 :: UInt
+  itob
+  concat
+  load 251 // v347 :: UInt
+  itob
+  concat
+  load 252 // v348 :: UInt
+  itob
+  concat
+  load 253 // numOfUsers/375 :: UInt
+  itob
+  concat
+  load 255 // netBalance/383 :: UInt
+  itob
+  concat
+  byte base64(AA==)
+  dig 1
+  extract 0 127
+  app_global_put
+  byte base64(AQ==)
+  dig 1
+  extract 127 127
+  app_global_put
+  byte base64(Ag==)
+  dig 1
+  extract 254 74
+  app_global_put
+  pop
+  int 13
+  store 1 // GV_currentStep :: UInt
+  global Round
+  store 2 // GV_currentTime :: UInt
+  b updateStateNoOp
+  l27_ifF:
+  load 247 // PoolCreator/341 :: Address
+  load 248 // poolDetails/342 :: Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)})
+  load 249 // v345 :: UInt
+  load 250 // v346 :: UInt
+  load 254 // thisConsensusTime/376 :: UInt
+  load 255 // netBalance/383 :: UInt
+  b loopBody4
+  // loopBody3 }
+
+
+  // { loopBody4
+  loopBody4:
+  store 255 // netBalance/421 :: UInt
+  store 254 // thisConsensusTime/414 :: UInt
+  store 253 // v346 :: UInt
+  store 252 // v345 :: UInt
+  store 251 // poolDetails/342 :: Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)})
+  dup
+  store 250 // PoolCreator/341 :: Address
+  load 251 // poolDetails/342 :: Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)})
+  concat
+  load 252 // v345 :: UInt
+  itob
+  concat
+  load 253 // v346 :: UInt
+  itob
+  concat
+  load 255 // netBalance/421 :: UInt
+  itob
+  concat
+  byte base64(AA==)
+  dig 1
+  extract 0 127
+  app_global_put
+  byte base64(AQ==)
+  dig 1
+  extract 127 127
+  app_global_put
+  byte base64(Ag==)
+  dig 1
+  extract 254 50
+  app_global_put
+  pop
+  int 7
+  store 1 // GV_currentStep :: UInt
+  global Round
+  store 2 // GV_currentTime :: UInt
+  b updateStateNoOp
+  // loopBody4 }
+
+
+  // { loopBody7
+  loopBody7:
+  store 255 // netBalance/438 :: UInt
+  store 254 // thisConsensusTime/431 :: UInt
+  store 253 // timedOut/430 :: Bool
+  store 252 // v346 :: UInt
+  store 251 // v345 :: UInt
+  store 250 // poolDetails/342 :: Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)})
+  store 249 // PoolCreator/341 :: Address
+  load 253 // timedOut/430 :: Bool
+  bz l28_ifF
+  int 18446744073709551615
+  load 254 // thisConsensusTime/431 :: UInt
+  -
+  load 252 // v346 :: UInt
+  -
+  int 0
+  >=
+  assert
+  // ^ Claim
+  // at reach standard library:567:15:application
+  // at reach standard library:575:29:application call to [unknown function] (defined at: reach standard library:564:55:function exp)
+  // at ./index.rsh:154:19:application call to "relativeTime" (defined at: reach standard library:570:71:function exp)
+  load 254 // thisConsensusTime/431 :: UInt
+  load 252 // v346 :: UInt
+  +
+  store 248 // v445 :: UInt
+  load 249 // PoolCreator/341 :: Address
+  load 250 // poolDetails/342 :: Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)})
+  concat
+  load 251 // v345 :: UInt
+  itob
+  concat
+  load 252 // v346 :: UInt
+  itob
+  concat
+  load 255 // netBalance/438 :: UInt
+  itob
+  concat
+  load 248 // v445 :: UInt
+  itob
+  concat
+  byte base64(AA==)
+  dig 1
+  extract 0 127
+  app_global_put
+  byte base64(AQ==)
+  dig 1
+  extract 127 127
+  app_global_put
+  byte base64(Ag==)
+  dig 1
+  extract 254 58
+  app_global_put
+  pop
+  int 12
+  store 1 // GV_currentStep :: UInt
+  global Round
+  store 2 // GV_currentTime :: UInt
+  b updateStateNoOp
+  l28_ifF:
+  load 254 // thisConsensusTime/431 :: UInt
+  load 252 // v346 :: UInt
+  +
+  store 248 // value/474 :: UInt
+  load 249 // PoolCreator/341 :: Address
+  load 250 // poolDetails/342 :: Object({"contributionAmt": UInt, "duration": UInt, "maxUsers": UInt, "penaltyAmt": UInt, "poolDescription": Bytes(200), "poolName": Bytes(16)})
+  concat
+  load 251 // v345 :: UInt
+  itob
+  concat
+  load 252 // v346 :: UInt
+  itob
+  concat
+  load 255 // netBalance/438 :: UInt
+  itob
+  concat
+  load 248 // value/474 :: UInt
+  itob
+  concat
+  byte base64(AA==)
+  dig 1
+  extract 0 127
+  app_global_put
+  byte base64(AQ==)
+  dig 1
+  extract 127 127
+  app_global_put
+  byte base64(Ag==)
+  dig 1
+  extract 254 58
+  app_global_put
+  pop
+  int 9
+  store 1 // GV_currentStep :: UInt
+  global Round
+  store 2 // GV_currentTime :: UInt
+  b updateStateNoOp
+  // loopBody7 }
+
+updateStateHalt:
+txn OnCompletion
+int DeleteApplication
+==
+assert
+// checked on completion
+// CompanionDelete
+
+  // { makeTxn
+  itxn_begin
+  int 0
+  itxn_field Fee
+  int 0
+  itxn_field Amount
+  int pay
+  itxn_field TypeEnum
+  global CreatorAddress
+  itxn_field CloseRemainderTo
+  global CurrentApplicationAddress
+  itxn_field Receiver
+  itxn_submit
+  // makeTxn }
+
+b updateState
+updateStateNoOp:
+txn OnCompletion
+int NoOp
+==
+assert
+// checked on completion
+updateState:
+byte base64()
+load 1 // GV_currentStep :: UInt
+itob
+load 2 // GV_currentTime :: UInt
+itob
+concat
+app_global_put
+load 6 // GV_wasMeth :: Bool
+bz checkSize
+apiReturn_noCheck:
+byte base64(FR98dQ==)
+load 7 // GV_apiRet :: Null
+concat
+log // up to 252 bytes
+checkSize:
+load 0 // GV_txnCounter :: UInt
+dup
+int 1
++
+global GroupSize
+==
+assert
+txn GroupIndex
+==
+assert
+done:
+int 1
+return
+apiReturn_check:
+txn OnCompletion
+int NoOp
+==
+assert
+// checked on completion
+b apiReturn_noCheck
+alloc:
+int 0
+store 1 // GV_currentStep :: UInt
+int 0
+store 2 // GV_currentTime :: UInt
+b updateStateNoOp
+l20_LF_cMapLoad:
+dup
+txn ApplicationID
+app_opted_in
+bnz l29_mapLoadDo
+l30_mapLoadDef:
+pop
+int 3
+bzero
+retsub
+l29_mapLoadDo:
+byte base64(AA==)
+app_local_get
+retsub
+l19_LF_checkTxn_net:
+// resource: R_Txn
+load 0 // GV_txnCounter :: UInt
+dup
+dup2
+int 1
++
+store 0 // GV_txnCounter :: UInt
+gtxns Receiver
+global CurrentApplicationAddress
+==
+assert
+gtxns TypeEnum
+int pay
+==
+assert
+gtxns Amount
+==
+assert
+retsub
