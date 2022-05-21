@@ -102,12 +102,12 @@ class Contributor extends React.Component {
       await Promise.all(promises);
       return data;
     }
-    const now = pretty(await reach.getNetworkTime());
+    // const now = pretty(await reach.getNetworkTime());
     const data = {
       ...(await runViews([
         ['poolDetails'],
       ])),
-      now,
+      // now,
     };
 
     this.setState({...data, view: 'ApplicationInfo'});
@@ -149,13 +149,6 @@ class Contributor extends React.Component {
     await this._refreshInfo(acc, ctc)
   }
 
-  async _view(which, name, ...args) {
-    const {acc, ctc} = this.state;
-    console.log(`calling view: ${which}.${name}`);
-    const res = await ctc.views[which][name]();
-    console.log(pretty(res));
-    await this._refreshInfo(acc, ctc);
-  }
 
   async register() {
     return this._api('Contributor', 'register');
