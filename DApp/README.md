@@ -7,7 +7,6 @@ Table of Contents
 =================
 - [Building a Tanda Club DApp using Reach](#building-a-tanda-club-dapp-using-reach)
 - [Table of Contents](#table-of-contents)
-  - [Requirements](#requirements)
   - [Agenda for this tutorial](#agenda-for-this-tutorial)
   - [Discussion of the setup of the Reach program](#discussion-of-the-setup-of-the-reach-program)
   - [Initial scaffolding, APIs and Participant interact interfaces.](#initial-scaffolding-apis-and-participant-interact-interfaces)
@@ -22,9 +21,7 @@ Table of Contents
   - [API function](#api-function)
   - [Event Function](#event-function)
 
-Requirements
-------------
-
+Requirements:
 1. Install [Reach](https://reach.sh/)
 2. Install `Docker` and `Docker Compose`.
 3. Install `Make`.
@@ -784,7 +781,22 @@ Contributor Views and Conponents
 
 Our focus will be on the `Api` Calls and `Events`....
 
-The `_refreshInfo` async function  basically runs our views and set the state.
+The `_refreshInfo` async function  basically runs- [Building a Tanda Club DApp using Reach](#building-a-tanda-club-dapp-using-reach)
+- [Building a Tanda Club DApp using Reach](#building-a-tanda-club-dapp-using-reach)
+- [Table of Contents](#table-of-contents)
+  - [Agenda for this tutorial](#agenda-for-this-tutorial)
+  - [Discussion of the setup of the Reach program](#discussion-of-the-setup-of-the-reach-program)
+  - [Initial scaffolding, APIs and Participant interact interfaces.](#initial-scaffolding-apis-and-participant-interact-interfaces)
+  - [Front-end setup in Javascript.](#front-end-setup-in-javascript)
+  - [Implementing the particpant interface and APIs.](#implementing-the-particpant-interface-and-apis)
+- [React frontend setup.](#react-frontend-setup)
+  - [Prerequisites](#prerequisites)
+  - [SelectNetwork Views and Components](#selectnetwork-views-and-components)
+  - [Deployer Views and Conponents](#deployer-views-and-conponents)
+  - [Contributor Views and Conponents](#contributor-views-and-conponents)
+  - [Attach Function](#attach-function)
+  - [API function](#api-function)
+  - [Event Function](#event-function)
 
 Attach Function
 --------------
