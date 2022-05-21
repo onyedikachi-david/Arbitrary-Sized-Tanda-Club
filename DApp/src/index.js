@@ -1,51 +1,26 @@
 import React from 'react';
 import AppViews from './views/AppViews';
 import DeployerViews from './views/DeployerViews';
-import StakerViews from './views/StakerViews';
+import ContributorViews from './views/ContributorViews';
 import {renderDOM, renderView} from './views/render';
 import './index.css';
 import * as backend from './contract/build/index.main.mjs';
 import {loadStdlib} from '@reach-sh/stdlib';
-// import MyAlgoConnect from '@reach-sh/stdlib/ALGO_MyAlgoConnect';
 import { ALGO_MyAlgoConnect as MyAlgoConnect } from '@reach-sh/stdlib';
-// import WalletConnect from '@reach-sh/stdlib/ALGO_WalletConnect';
 import pretty from './pretty';
 
 let reach;
-// let reach = loadStdlib({
-//   REACH_CONNECTOR_MODE: 'ALGO',
-//   // REACH_DEBUG: 'yes',
-// });
+
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {view: 'SelectNetwork', 
-    // date: new Date()
-  };
-    // this.tick = this.tick.bind(this)
+    this.state = {view: 'SelectNetwork'};
   }
-  // componentDidMount() {
-  //   this.timerID = setInterval(
-  //     () => this.tick(),
-  //     1000
-  //   );
-  // }
-
-  // componentWillUnmount() {
-  //   clearInterval(this.timerID);
-  // }
-
-  // tick() {
-  //   this.setState({
-  //     date: new Date()
-  //   });
-  // }
 
 
   async selectNetwork(REACH_CONNECTOR_MODE, providerEnv) {
     reach = reach || loadStdlib({
       REACH_CONNECTOR_MODE,
-      // REACH_DEBUG: 'yes',
     });
     const {connector} = reach;
     this.setState({view: 'ConnectAccount', providerEnv, connector});
@@ -58,12 +33,6 @@ class App extends React.Component {
         MyAlgoConnect,
         providerEnv,
       }));
-    // Disabled due to technical difficulties
-    // } else if (which = 'WalletConnect') {
-    //   reach.setWalletFallback(reach.walletFallback({
-    //     WalletConnect,
-    //     providerEnv,
-    //   }));
 
     } else if (which === 'MetaMask') {
       // Anything to do here? Should just work.
@@ -77,7 +46,7 @@ class App extends React.Component {
   }
 
   selectDeployer() { this.setState({view: 'Wrapper', ContentView: Deployer}); }
-  selectStaker() { this.setState({view: 'Wrapper', ContentView: Staker}); }
+  selectContributor() { this.setState({view: 'Wrapper', ContentView: Contributor}); }
   render() { return renderView(this, AppViews); }
 }
 
@@ -106,32 +75,12 @@ class Deployer extends React.Component {
 
   render() { return renderView(this, DeployerViews); }
 }
-class Staker extends React.Component {
+class Contributor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {view: 'Attach', dappEvents: '', phase: ''}; // XXX create view
     this.setUserUpdates = this.setUserUpdates.bind(this);
-    // this.eM = this.state.ctc.events
   }
-
-  // componentDidMount() {
-  //   // this.a = this.state.ctc.events
-  //   const bla = this.eM.Update.info.monitor(this.setUserUpdates);
-  //   console.log(bla);
-  //   // a.Update.info.monitor(this.setUserUpdates());
-  //   // await ctc.events.Update.info.monitor(this.setUserUpdates())
-  // }
-
-  // componentWillUnmount() {
-  //   // clearInterval(this.a);
-  // }
-
-  // const callme = async () => {
-  //   const {acc, ctc} = this.state;
-
-  //   return eM.Update.info.monitor(this.setUserUpdates)
-  // }
-  // componentDidUpdate(prevProps, prevState)
 
   async _refreshInfo(acc, ctc) {
     const runView = async (vname, ...args) => {
@@ -148,8 +97,6 @@ class Staker extends React.Component {
           data[vname] = res;
         })();
         promises.push(p);
-        // For some reason we *do* need to perform these queries serially,
-        // or else they all come back None. =[
         await p;
       }
       await Promise.all(promises);
@@ -159,11 +106,6 @@ class Staker extends React.Component {
     const data = {
       ...(await runViews([
         ['poolDetails'],
-        // ['totalStaked'],
-        // ['remainingRewards'],
-        // ['end'],
-        // ['staked', acc],
-        // ['rewardsAvailableAt', acc, now],
       ])),
       now,
     };
@@ -207,16 +149,6 @@ class Staker extends React.Component {
     await this._refreshInfo(acc, ctc)
   }
 
-
-  // async _monitorEvent() {
-  //   const {acc, ctc} = this.state;
-  //   console.log(`calling event: `);
-  //   const res = await ctc.events.Update.info.monitor(this.setUserUpdates());
-  //   console.log(pretty(res));
-  //   this.setState({dappEvents: this.state.dappEvents + '\n' + pretty(res.what[0][0])});
-  //   await this._refreshInfo(acc, ctc)
-  // }
-
   async _view(which, name, ...args) {
     const {acc, ctc} = this.state;
     console.log(`calling view: ${which}.${name}`);
@@ -249,8 +181,7 @@ class Staker extends React.Component {
     return this._eventU();
   }
   render() {
-    // console.info('Staker\'s props!', this.props);
-    return renderView(this, StakerViews);
+    return renderView(this, ContributorViews);
   }
 }
 

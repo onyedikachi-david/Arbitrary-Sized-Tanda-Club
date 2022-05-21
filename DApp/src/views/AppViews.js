@@ -55,27 +55,11 @@ exports.Wrapper = class extends React.Component {
           </div>
         </div>
 
-        {/* <div className="bottom-area">
-          <div className="container">
-            <button className="toggle-btn">
-              <i className="far fa-moon"></i>
-              <i className="far fa-sun"></i>
-            </button>
-          </div>
-        </div> */}
+      
       </div>
     </main>
     </div>
-      // <div className="App">
-      //   <header className="App-header" id="root">
-      //     <h1>Simple Staker</h1>
-      //     <main className='MainContentContainer'>
-      //     <h2>Time bomb: {content.props.date.toLocaleTimeString()}.</h2>
-
-      //       {content}
-      //     </main>
-      //   </header>
-      // </div>
+   
     );
   }
 }
@@ -90,8 +74,6 @@ exports.SelectNetwork = class extends React.Component {
                 <h1>Future is here,</h1>
                 <h1>Start Exploring now.</h1>
               </div>
-         
-          {/* <div className='text'> */}
           <br />
             <h3>
           Select a network
@@ -108,10 +90,6 @@ exports.SelectNetwork = class extends React.Component {
         <button className="btn" onClick={() => parent.selectNetwork('ALGO', 'MainNet')}
         >Algorand MainNet</button>
         <br />
-        {/* <br />
-        <p>Beware: the author has not tested this yet</p>
-        <button className="btn" onClick={() => parent.selectNetwork('ETH')}
-        >Ethereum<br />or EVM/web3 compatible</button> */}
         </div>
       </>
     )
@@ -122,8 +100,6 @@ exports.ConnectAccount = class extends React.Component {
   render() {
     const { parent, connector } = this.props;
     const ctcInfoStr = false;
-    // console.info('ConnectAccount\'s props!', this.props);
-    // console.info('ConnectAccount\'s parent!', parent);
     return (
       <>
         <h4 >
@@ -137,11 +113,7 @@ exports.ConnectAccount = class extends React.Component {
           <button className="btn" onClick={
             () => parent.openWalletPopUp('MyAlgoConnect')
           }>MyAlgoConnect</button>
-          {/* disabled the WalletConnect option due to technical difficulties
-          <button className='MyAlgoWalletButton' onClick={
-            () => parent.openWalletPopUp('WalletConnect')
-          }>WalletConnect</button>
-          */}
+      
         </> : <>
           <button className='MyAlgoWalletButton' onClick={
             () => parent.openWalletPopUp('MetaMask')
@@ -180,7 +152,7 @@ exports.RoleSelect = class extends React.Component {
 
 
           <button className="btn" 
-            onClick={() => parent.selectStaker()}
+            onClick={() => parent.selectContributor()}
           >
             
             <h1>Contributor</h1>

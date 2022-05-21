@@ -105,15 +105,6 @@ export const main = Reach.App(() => {
                 callBack(null)
                 return [numOfUsers + 1]
             }))
-    // awaitRegistionApi(C.register);
-
-    // const RegisteredUsers = new Set();
-    // commit();
-    // const [[], k] = call(C.register)
-    //         .assume(() => check(!RegisteredUsers.member(this)))
-    //         .pay(() => penaltyAmt)
-    //     RegisteredUsers.insert(this);
-    //     k(null);
     
     // const start = lastConsensusTime() + 2;
     // const deadline = start + duration;
